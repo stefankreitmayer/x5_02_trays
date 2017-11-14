@@ -51,11 +51,15 @@ renderSearchResults model =
 renderResource : Resource -> Html Msg
 renderResource ({annotations} as resource) =
   let
+      coverImage =
+        Html.img [ Html.Attributes.src ("images/resource_covers/" ++ resource.coverImageStub ++ ".png") ] []
       title =
-        Html.h3 [] [ Html.a [ Html.Attributes.href resource.url, Html.Attributes.target "_blank" ] [ resource.title |> Html.text ] ]
-      url =
-        Html.cite [] [ Html.text resource.url ]
-      kind =
+        Html.h3 [] [ resource.title |> Html.text ]
+      date =
+        p [ class "SearchListView__Item__Date" ] [ resource.date |> Html.text ]
+      domain =
+        Html.cite [] [ resource.url |> String.split "/" |> List.take 3 |> List.drop 2 |> String.join "" |> Html.text ]
+      iconsList =
         case resource.kind of
           "" ->
             []
@@ -79,10 +83,14 @@ renderResource ({annotations} as resource) =
 
           str ->
             [ span [] [ str |> Html.text] ]
-      urlLine =
-        div [] (kind ++ [ url ])
+      icons =
+        iconsList |> div [ class "SearchListView__Item__Icons" ]
+      left =
+        div [ class "SearchListView__Item__Left" ] [ coverImage ]
+      right =
+        div [ class "SearchListView__Item__Right" ] [ title, domain, date, icons ]
       children =
-        [ title, urlLine ]
+        [ left, right ]
   in
       div [ class "SearchListView__Item" ] children
 

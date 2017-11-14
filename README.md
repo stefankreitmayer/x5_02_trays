@@ -6,11 +6,13 @@ User interface sketch for X5gon project
 
 Same as [prototype 01](https://github.com/stefankreitmayer/x5_01_metacourse)
 
-
 ## Data
 
 Similar to [prototype 01](https://github.com/stefankreitmayer/x5_01_metacourse)
 
+## Build instructions
+
+Same as [prototype 01](https://github.com/stefankreitmayer/x5_01_metacourse)
 
 ## Thoughts about interface design
 
@@ -30,12 +32,8 @@ Goals:
 
 Once people start using the platform, I suppose we might get useful data out of tracking how learners move their resources from one basket to another over the course of their learning. Presumably, we could use these data to infer recommendability (perhaps within similar learner types) and perhaps visualise them in a way that helps learners browse more efficiently (caveat: feedback loop).
 
+## Preliminary insights
 
-## Build instructions
+Unlike Amazon, most OERs don't have a (good) title image. MOOCs usually do (or sometimes they have a video trailer instead, e.g. [this one](https://www.udemy.com/machinelearning/) ), but blog articles, ebooks, etc usually just have title and author. Blog articles often have a generic background (stock photo, e.g. mountains or sky) that has nothing to do with the topic. I have seen pdf books where the cover is just a blank page with the title. Not very appealing to a browsing audience. I wouldn't be surprised if this had an effect on the amount of attention certain resources get from learners. I don't have a perfect solution to this problem.  Nevertheless I think that pictures are needed. We could potentially auto-generate them, if needed, using e.g. random colours, the resource title, the logo of the domain, an automatic screen grab (if license allows), etc. Or perhaps we could use [Opengraph](http://ogp.me/). The latter might be a good option because it puts the resource provider in charge of how their product appears on our site.
 
-To build the code you need to install [Elm](https://guide.elm-lang.org/install.html).
-
-**Mac and Linux**:
-
-1. Run `build.sh`
-2. Open `index.html` in a browser
+Although creating images manually obviously isn't an option, for the purpose of this prototype I did it anyway, using screenshots, in order to get a feel for how bad the situation is, what the page could look like if every resource had an image, and to get ideas for automated solutions.
