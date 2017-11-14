@@ -1,0 +1,67 @@
+body{
+  font-family: Helvetica, "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  color: #333;
+  margin: 0;
+}
+
+h3{
+  font-family: Verdana, sans-serif;
+  margin-top: 25px;
+  margin-bottom: 3px;
+}
+
+.UserSelectNone{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+/* PAGE */
+
+.PageContainer {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 15px;
+  /* border: 1px solid; */
+}
+
+/* NOTIFICATION */
+
+.Notification{
+  width: 100%;
+  background: #faa;
+  padding: 15px;
+  margin: -15px;
+}
+
+
+/* SEARCH RESULTS */
+
+.SearchResults__NumberOfResults {
+  color: #999;
+}
+
+
+.SearchListView__Item cite, span {
+  font-size: 14px;
+  color: rgb(0, 102, 33);
+}
+
+.SearchListView__Item span {
+  display: inline-block;
+  padding: 0 2px;
+  margin-right: 5px;
+  border: 1px solid rgb(0, 102, 33);
+  border-radius: 2px;
+}
+
+.SearchListView__Item img {
+  height: 18px;
+  margin-right: 8px;
+  opacity: 0.6;
+}
