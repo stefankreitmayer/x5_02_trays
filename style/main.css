@@ -2,19 +2,11 @@ body{
   font-size: 13px;
   color: #333;
   margin: 0;
+  background-color: rgba(0,0,0,0.035);
 }
 
 body, h1,h2,h3,h4,h5{
   font-family: Helvetica, "Helvetica Neue", sans-serif;
-}
-
-h3{
-  /* font-family: Verdana, sans-serif; */
-  margin-top: 0;
-  margin-bottom: 3px;
-  font-size: 20px;
-  font-weight: 500;
-  color: #28b;
 }
 
 .UserSelectNone{
@@ -25,75 +17,4 @@ h3{
   -ms-user-select: none;
   user-select: none;
   cursor: default;
-}
-
-/* PAGE */
-
-.PageContainer {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 15px;
-  /* border: 1px solid; */
-}
-
-/* NOTIFICATION */
-
-.Notification{
-  width: 100%;
-  background: #faa;
-  padding: 15px;
-  margin: -15px;
-}
-
-
-/* SEARCH RESULTS */
-
-.SearchResults__NumberOfResults {
-  color: #999;
-}
-
-.SearchListView__Item {
-  margin-top: 20px;
-  padding-top: 8px;
-  border-top: 1px solid #ccc;
-  min-height: 180px;
-}
-
-.SearchListView__Item:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-.SearchListView__Item__Left{
-  float: left;
-  width: 240px;
-}
-
-.SearchListView__Item__Left img{
-  width: 170px;
-  margin-left: 15px;
-}
-
-.SearchListView__Item__Right{
-  float: left;
-}
-
-.SearchListView__Item cite, span {
-  font-size: 14px;
-  color: rgb(0, 102, 33);
-}
-
-.SearchListView__Item span {
-  display: inline-block;
-  padding: 0 2px;
-  margin-right: 5px;
-  border: 1px solid rgb(0, 102, 33);
-  border-radius: 2px;
-}
-
-.SearchListView__Item__Icons img {
-  height: 28px;
-  margin-right: 8px;
-  opacity: 0.5;
 }
