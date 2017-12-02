@@ -4,6 +4,7 @@ import Model.Ui exposing (..)
 import Model.Resource exposing (..)
 import Model.FakeData
 
+import Element.Input as Input
 
 type alias Model =
   { ui : Ui

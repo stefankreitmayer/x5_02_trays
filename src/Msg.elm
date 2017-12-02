@@ -5,7 +5,7 @@ import Model.Ui exposing (..)
 
 
 type Msg
-  = Noop
+  = ChangeSearchString String
 
 
 subscriptions : Model -> Sub Msg

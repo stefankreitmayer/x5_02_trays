@@ -11,5 +11,5 @@ import Debug exposing (log)
 update : Msg -> Model -> (Model, Cmd Msg)
 update action ({resources} as model) =
   case action of
-    Noop ->
+    ChangeSearchString _ ->
       (model, Cmd.none)
