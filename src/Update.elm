@@ -16,3 +16,9 @@ update action ({searchResults} as model) =
 
     AddResourceToProject resource ->
       ({ model | projectResources = resource :: model.projectResources }, Cmd.none)
+
+    ShowDetails resource ->
+      ({ model | expandedResourcesByUrl = resource.url :: model.expandedResourcesByUrl}, Cmd.none)
+
+    HideDetails resource ->
+      ({ model | expandedResourcesByUrl = model.expandedResourcesByUrl |> List.filter (\url -> not (url == resource.url))}, Cmd.none)

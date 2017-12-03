@@ -8,6 +8,8 @@ import Model.Resource exposing (..)
 type Msg
   = ChangeSearchString String
   | AddResourceToProject Resource
+  | ShowDetails Resource
+  | HideDetails Resource
 
 
 subscriptions : Model -> Sub Msg

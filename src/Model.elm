@@ -10,6 +10,7 @@ type alias Model =
   { ui : Ui
   , searchResults : List Resource
   , projectResources : List Resource
+  , expandedResourcesByUrl : List String
   , errorMsg : Maybe String }
 
 
@@ -18,4 +19,5 @@ initialModel =
   { ui = initialUi
   , searchResults = Model.FakeData.exampleResources
   , projectResources = []
+  , expandedResourcesByUrl = []
   , errorMsg = Nothing }

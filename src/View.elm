@@ -86,7 +86,7 @@ renderPageBody model =
   row DebugStyle [ height fill ]
     -- [ renderSideBar
     [ renderCatalogue model
-    , renderProject model.projectResources
+    , renderProject model
     ]
 
 
@@ -132,7 +132,7 @@ renderSearchResult model resource =
         button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
   in
       row NoStyle [ spacing 10 ]
-        [ renderResource resource
+        [ renderResource model resource
         , addButton
         ]
 
@@ -149,34 +149,52 @@ renderNumberOfSearchResults n =
       el HintStyle [] (text str)
 
 
-renderProject resources =
+renderProject model =
   column ProjectStyle [ width (percent 50), padding 10, spacing 10 ]
     [ h2 H2Style [] (text "My dummy project")
-    , renderProjectResourceList resources
+    , renderProjectResourceList model
     ]
 
 
-renderProjectResourceList : List Resource -> Element MyStyles variation Msg
-renderProjectResourceList resources =
-  case resources of
-    [] ->
-      el HintStyle [] (text "To build your project, search for a topic and start adding resources.")
+renderProjectResourceList : Model -> Element MyStyles variation Msg
+renderProjectResourceList model =
+  let
+      resources = model.projectResources
+  in
+      case resources of
+        [] ->
+          el HintStyle [] (text "To build your project, search for a topic and start adding resources.")
 
-    _ ->
-      resources
-      |> List.map renderResource
-      |> column NoStyle [ width fill, spacing 10 ]
-      |> List.singleton
-      |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
+        _ ->
+          resources
+          |> List.map (renderResource model)
+          |> column NoStyle [ width fill, spacing 10 ]
+          |> List.singleton
+          |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
 
-renderResource resource =
+renderResource model resource =
   row ResourceStyle [ padding 10, spacing 10, width fill ]
     [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
-    , column NoStyle [ spacing 3 ]
+    , column NoStyle [ spacing 3, width fill ]
       [ paragraph ResourceTitleStyle [] [ text resource.title ]
-      , paragraph NoStyle [] [ text resource.url ] |> newTab resource.url
       , el HintStyle [ width fill ] (text resource.date)
       , el NoStyle [ width fill, alignRight ] (text resource.kind)
+      , renderResourceDetailsPanel model resource
       ]
     ]
+
+
+renderResourceDetailsPanel model resource =
+  let
+      (collapseButton, details) =
+        if List.member resource.url model.expandedResourcesByUrl then
+          ( button NoStyle [ paddingXY 4 1, onClick (HideDetails resource), alignRight ] (text "Hide")
+          , [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
+          )
+        else
+          ( button NoStyle [ paddingXY 4 1, onClick (ShowDetails resource), alignRight ] (text "More")
+          , [])
+  in
+      column NoStyle [ spacing 3 ]
+        (collapseButton :: details)
