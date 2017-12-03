@@ -173,5 +173,10 @@ renderProjectResourceList resources =
 renderResource resource =
   row ResourceStyle [ padding 10, spacing 10, width fill ]
     [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
-    , paragraph ResourceTitleStyle [] [ text resource.title ]
+    , column NoStyle [ spacing 3 ]
+      [ paragraph ResourceTitleStyle [] [ text resource.title ]
+      , paragraph NoStyle [] [ text resource.url ] |> newTab resource.url
+      , el HintStyle [ width fill ] (text resource.date)
+      , el NoStyle [ width fill, alignRight ] (text resource.kind)
+      ]
     ]
