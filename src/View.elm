@@ -26,7 +26,6 @@ type MyStyles
   | HeaderStyle
   | SidebarStyle
   | SearchResultStyle
-  | ScrollContainerStyle
   | NumberOfResultsStyle
 
 
@@ -49,9 +48,6 @@ stylesheet =
       [ Color.background <| Color.white
       , Color.text <| Color.black
       , Shadow.simple
-      ]
-    , Style.style ScrollContainerStyle
-      [ Style.prop "overflow" "scroll"
       ]
     , Style.style NumberOfResultsStyle
       [ Color.text <| Color.rgb 120 120 120
@@ -108,7 +104,7 @@ renderSearchResults resources =
   |> (::) (renderNumberOfSearchResults (List.length resources))
   |> column NoStyle [ width fill, spacing 10 ]
   |> List.singleton
-  |> column ScrollContainerStyle [ width fill, height fill, spacing 10 ]
+  |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
 
 renderSearchResult resource =
