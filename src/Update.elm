@@ -13,3 +13,6 @@ update action ({searchResults} as model) =
   case action of
     ChangeSearchString _ ->
       (model, Cmd.none)
+
+    AddResourceToProject resource ->
+      ({ model | projectResources = resource :: model.projectResources }, Cmd.none)

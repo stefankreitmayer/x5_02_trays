@@ -5,6 +5,7 @@ import Color exposing (..)
 
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Events exposing (onClick)
 import Element.Input as Input
 
 import Style
@@ -23,10 +24,12 @@ import Msg exposing (..)
 type MyStyles
   = NoStyle
   | DebugStyle
+  | H2Style
   | HeaderStyle
   | SidebarStyle
   | SearchResultStyle
   | NumberOfResultsStyle
+  | ProjectStyle
 
 
 stylesheet =
@@ -35,6 +38,10 @@ stylesheet =
     , Style.style DebugStyle
       [ Color.background <| Color.rgb 210 210 210
       , Border.all 2
+      ]
+    , Style.style H2Style
+      [ Color.text <| Color.rgb 50 50 50
+      , Font.size 24
       ]
     , Style.style HeaderStyle
       [ Color.background <| Color.rgb 0 100 180
@@ -51,6 +58,9 @@ stylesheet =
       ]
     , Style.style NumberOfResultsStyle
       [ Color.text <| Color.rgb 120 120 120
+      ]
+    , Style.style ProjectStyle
+      [ Border.left 2
       ]
     ]
 
@@ -70,7 +80,7 @@ renderPageBody model =
   row DebugStyle [ height fill ]
     [ renderSideBar
     , renderCatalogue model
-    , renderTrolley
+    , renderProject model.projectResources
     ]
 
 
@@ -97,7 +107,7 @@ renderSearchTextField =
     }
 
 
-renderSearchResults : List Resource -> Element MyStyles variation msg
+renderSearchResults : List Resource -> Element MyStyles variation Msg
 renderSearchResults resources =
   resources
   |> List.map renderSearchResult
@@ -108,10 +118,13 @@ renderSearchResults resources =
 
 
 renderSearchResult resource =
-  el SearchResultStyle [ padding 10 ] (text resource.title)
+  row NoStyle [ spacing 10 ]
+    [ el SearchResultStyle [ width fill, padding 10 ] (text resource.title)
+    , button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add")
+    ]
 
 
-renderNumberOfSearchResults : Int -> Element MyStyles variation msg
+renderNumberOfSearchResults : Int -> Element MyStyles variation Msg
 renderNumberOfSearchResults n =
   let
       str =
@@ -123,7 +136,28 @@ renderNumberOfSearchResults n =
       el NumberOfResultsStyle [] (text str)
 
 
-renderTrolley =
-  column DebugStyle [ width fill, padding 10 ]
-    [ el NoStyle [ width fill, center, verticalCenter ] (text "Your selected items will go here.")
+renderProject resources =
+  column ProjectStyle [ width fill, padding 10, spacing 10 ]
+    [ h2 H2Style [] (text "My dummy project")
+    , renderProjectResourceList resources
+    ]
+
+
+renderProjectResourceList : List Resource -> Element MyStyles variation Msg
+renderProjectResourceList resources =
+  case resources of
+    [] ->
+      el NumberOfResultsStyle [] (text "To build your project, search for a topic and start adding resources.")
+
+    _ ->
+      resources
+      |> List.map renderProjectResource
+      |> column NoStyle [ width fill, spacing 10 ]
+      |> List.singleton
+      |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
+
+
+renderProjectResource resource =
+  row NoStyle [ spacing 10 ]
+    [ el SearchResultStyle [ width fill, padding 10 ] (text resource.title)
     ]
