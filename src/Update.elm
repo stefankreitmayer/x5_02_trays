@@ -37,6 +37,8 @@ update action oldModel =
           in
               ({ model | resourceDropmenu = newState }, Cmd.none)
 
+        RemoveResourceFromProject resource ->
+          ({ model | projectResources = model.projectResources |> List.filter (\r -> not (r == resource)) }, Cmd.none)
 
 closeDropmenu : Model -> Model
 closeDropmenu model =

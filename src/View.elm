@@ -233,6 +233,6 @@ renderResourceDetailsStatic model resource =
 renderResourceInProjectDropmenu model resource button =
   if model.resourceDropmenu == Just resource then
     button
-    |> below [ el DropmenuStyle [ alignRight, paddingXY 10 5 ] (text "dropmenu here") ]
+    |> below [ el DropmenuStyle [ alignRight, paddingXY 10 5, onClick (RemoveResourceFromProject resource) ] (text "Remove") ]
   else
     button

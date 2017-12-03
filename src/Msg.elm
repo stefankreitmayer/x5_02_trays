@@ -11,6 +11,7 @@ type Msg
   | ShowDetails Resource
   | HideDetails Resource
   | ToggleResourceDropmenu Resource
+  | RemoveResourceFromProject Resource
 
 
 subscriptions : Model -> Sub Msg
