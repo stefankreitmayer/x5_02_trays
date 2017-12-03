@@ -99,7 +99,7 @@ renderPageBody model =
 renderCatalogue model =
   column NoStyle [ width (percent 50), padding 10, spacing 10 ]
     [ renderSearchTextField
-    , renderSearchResults model.searchResults
+    , renderSearchResults model
     ]
 
 
@@ -113,21 +113,28 @@ renderSearchTextField =
     }
 
 
-renderSearchResults : List Resource -> Element MyStyles variation Msg
-renderSearchResults resources =
-  resources
-  |> List.map renderSearchResult
-  |> (::) (renderNumberOfSearchResults (List.length resources))
+renderSearchResults : Model -> Element MyStyles variation Msg
+renderSearchResults ({searchResults} as model) =
+  searchResults
+  |> List.map (renderSearchResult model)
+  |> (::) (renderNumberOfSearchResults (List.length searchResults))
   |> column NoStyle [ width fill, spacing 10 ]
   |> List.singleton
   |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
 
-renderSearchResult resource =
-  row NoStyle [ spacing 10 ]
-    [ renderResource resource
-    , button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
-    ]
+renderSearchResult model resource =
+  let
+    addButton =
+      if List.member resource model.projectResources then
+        el HintStyle [ padding 3 ] (text "Added")
+      else
+        button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
+  in
+      row NoStyle [ spacing 10 ]
+        [ renderResource resource
+        , addButton
+        ]
 
 
 renderNumberOfSearchResults : Int -> Element MyStyles variation Msg
