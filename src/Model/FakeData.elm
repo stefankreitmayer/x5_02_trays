@@ -26,4 +26,4 @@ exampleResources =
   , Resource "A Non-Technical Introduction to Machine Learning – SafeGraph" "https://blog.safegraph.com/a-non-technical-introduction-to-machine-learning-b49fce202ae8?gi=ccaf0749079" "safegraph" "article" "3 Mar 2017" Dict.empty
   , Resource "A Brief Introduction to Machine Learning for Engineers" "https://arxiv.org/abs/1709.02840" "brief" "book" "8 Sep 2017" Dict.empty
   , Resource "Intro To Machine Learning - Python & R In Data Science" "https://www.udemy.com/machinelearning" "python" "course" "" Dict.empty
-  , Resource "http://ocdevel.com/podcasts/machine-learning" "OCDevel" "ocdevel" "podcast" "" Dict.empty ]
+  , Resource "Machine Learning Guide" "http://ocdevel.com/podcasts/machine-learning" "ocdevel" "podcast" "" Dict.empty ]

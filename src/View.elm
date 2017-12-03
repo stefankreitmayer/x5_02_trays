@@ -27,8 +27,9 @@ type MyStyles
   | H2Style
   | HeaderStyle
   | SidebarStyle
-  | SearchResultStyle
-  | NumberOfResultsStyle
+  | ResourceStyle
+  | ResourceTitleStyle
+  | HintStyle
   | ProjectStyle
 
 
@@ -51,12 +52,17 @@ stylesheet =
       [ Color.background <| Color.rgb 50 50 50
       , Color.text <| Color.white
       ]
-    , Style.style SearchResultStyle
+    , Style.style ResourceStyle
       [ Color.background <| Color.white
       , Color.text <| Color.black
       , Shadow.simple
       ]
-    , Style.style NumberOfResultsStyle
+    , Style.style ResourceTitleStyle
+      [ Color.text <| Color.rgb 50 50 50
+      , Font.size 16
+      , Font.weight 600
+      ]
+    , Style.style HintStyle
       [ Color.text <| Color.rgb 120 120 120
       ]
     , Style.style ProjectStyle
@@ -78,20 +84,20 @@ renderPageHeader =
 
 renderPageBody model =
   row DebugStyle [ height fill ]
-    [ renderSideBar
-    , renderCatalogue model
+    -- [ renderSideBar
+    [ renderCatalogue model
     , renderProject model.projectResources
     ]
 
 
-renderSideBar =
-  column SidebarStyle [ width (px 200), padding 10 ]
-    [ el NoStyle [] (text "[project selector goes here]")
-    ]
+-- renderSideBar =
+--   column SidebarStyle [ width (px 200), padding 10 ]
+--     [ el NoStyle [] (text "[project selector goes here]")
+--     ]
 
 
 renderCatalogue model =
-  column NoStyle [ width fill, padding 10, spacing 10 ]
+  column NoStyle [ width (percent 50), padding 10, spacing 10 ]
     [ renderSearchTextField
     , renderSearchResults model.searchResults
     ]
@@ -119,8 +125,8 @@ renderSearchResults resources =
 
 renderSearchResult resource =
   row NoStyle [ spacing 10 ]
-    [ el SearchResultStyle [ width fill, padding 10 ] (text resource.title)
-    , button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add")
+    [ renderResource resource
+    , button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
     ]
 
 
@@ -133,11 +139,11 @@ renderNumberOfSearchResults n =
           1 -> "1 result"
           _ -> (toString n) ++ " results"
   in
-      el NumberOfResultsStyle [] (text str)
+      el HintStyle [] (text str)
 
 
 renderProject resources =
-  column ProjectStyle [ width fill, padding 10, spacing 10 ]
+  column ProjectStyle [ width (percent 50), padding 10, spacing 10 ]
     [ h2 H2Style [] (text "My dummy project")
     , renderProjectResourceList resources
     ]
@@ -147,17 +153,18 @@ renderProjectResourceList : List Resource -> Element MyStyles variation Msg
 renderProjectResourceList resources =
   case resources of
     [] ->
-      el NumberOfResultsStyle [] (text "To build your project, search for a topic and start adding resources.")
+      el HintStyle [] (text "To build your project, search for a topic and start adding resources.")
 
     _ ->
       resources
-      |> List.map renderProjectResource
+      |> List.map renderResource
       |> column NoStyle [ width fill, spacing 10 ]
       |> List.singleton
       |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
 
-renderProjectResource resource =
-  row NoStyle [ spacing 10 ]
-    [ el SearchResultStyle [ width fill, padding 10 ] (text resource.title)
+renderResource resource =
+  row ResourceStyle [ padding 10, spacing 10, width fill ]
+    [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
+    , paragraph ResourceTitleStyle [] [ text resource.title ]
     ]
