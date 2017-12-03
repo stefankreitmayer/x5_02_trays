@@ -132,7 +132,7 @@ renderSearchResult model resource =
         button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
   in
       row NoStyle [ spacing 10 ]
-        [ renderResource model resource
+        [ renderResourceInSearchResults model resource
         , addButton
         ]
 
@@ -167,25 +167,37 @@ renderProjectResourceList model =
 
         _ ->
           resources
-          |> List.map (renderResource model)
+          |> List.map (renderResourceInProject model)
           |> column NoStyle [ width fill, spacing 10 ]
           |> List.singleton
           |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
 
-renderResource model resource =
+renderResourceInSearchResults model resource =
   row ResourceStyle [ padding 10, spacing 10, width fill ]
     [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
     , column NoStyle [ spacing 3, width fill ]
       [ paragraph ResourceTitleStyle [] [ text resource.title ]
       , el HintStyle [ width fill ] (text resource.date)
       , el NoStyle [ width fill, alignRight ] (text resource.kind)
-      , renderResourceDetailsPanel model resource
+      , renderResourceDetailsCollapsible model resource
       ]
     ]
 
 
-renderResourceDetailsPanel model resource =
+renderResourceInProject model resource =
+  row ResourceStyle [ padding 10, spacing 10, width fill ]
+    [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
+    , column NoStyle [ spacing 3, width fill ]
+      [ paragraph ResourceTitleStyle [] [ text resource.title ]
+      , el HintStyle [ width fill ] (text resource.date)
+      , el NoStyle [ width fill, alignRight ] (text resource.kind)
+      , renderResourceDetailsStatic model resource
+      ]
+    ]
+
+
+renderResourceDetailsCollapsible model resource =
   let
       (collapseButton, details) =
         if List.member resource.url model.expandedResourcesByUrl then
@@ -198,3 +210,8 @@ renderResourceDetailsPanel model resource =
   in
       column NoStyle [ spacing 3 ]
         (collapseButton :: details)
+
+
+renderResourceDetailsStatic model resource =
+  column NoStyle [ spacing 3 ]
+    [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
