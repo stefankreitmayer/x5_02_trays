@@ -31,6 +31,7 @@ type MyStyles
   | ResourceTitleStyle
   | HintStyle
   | ProjectStyle
+  | DropmenuStyle
 
 
 stylesheet =
@@ -68,6 +69,13 @@ stylesheet =
     , Style.style ProjectStyle
       [ Border.left 2
       ]
+    , Style.style DropmenuStyle
+      [ Color.background <| Color.white
+      , Color.text <| Color.black
+      , Color.border <| Color.rgb 200 200 200
+      , Border.all 1
+      , Shadow.simple
+      ]
     ]
 
 
@@ -97,7 +105,7 @@ renderPageBody model =
 
 
 renderCatalogue model =
-  column NoStyle [ width (percent 50), padding 10, spacing 10 ]
+  column NoStyle [ width (percent 40), padding 10, spacing 10 ]
     [ renderSearchTextField
     , renderSearchResults model
     ]
@@ -150,7 +158,7 @@ renderNumberOfSearchResults n =
 
 
 renderProject model =
-  column ProjectStyle [ width (percent 50), padding 10, spacing 10 ]
+  column ProjectStyle [ width (percent 60), padding 10, spacing 10 ]
     [ h2 H2Style [] (text "My dummy project")
     , renderProjectResourceList model
     ]
@@ -194,6 +202,11 @@ renderResourceInProject model resource =
       , el NoStyle [ width fill, alignRight ] (text resource.kind)
       , renderResourceDetailsStatic model resource
       ]
+    , column NoStyle []
+      [ decorativeImage NoStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
+        |> button NoStyle [ onClick (ToggleResourceDropmenu resource) ]
+        |> renderResourceInProjectDropmenu model resource
+      ]
     ]
 
 
@@ -215,3 +228,11 @@ renderResourceDetailsCollapsible model resource =
 renderResourceDetailsStatic model resource =
   column NoStyle [ spacing 3 ]
     [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
+
+
+renderResourceInProjectDropmenu model resource button =
+  if model.resourceDropmenu == Just resource then
+    button
+    |> below [ el DropmenuStyle [ alignRight, paddingXY 10 5 ] (text "dropmenu here") ]
+  else
+    button

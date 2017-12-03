@@ -11,6 +11,7 @@ type alias Model =
   , searchResults : List Resource
   , projectResources : List Resource
   , expandedResourcesByUrl : List String
+  , resourceDropmenu : Maybe Resource
   , errorMsg : Maybe String }
 
 
@@ -20,4 +21,5 @@ initialModel =
   , searchResults = Model.FakeData.exampleResources
   , projectResources = []
   , expandedResourcesByUrl = []
+  , resourceDropmenu = Nothing
   , errorMsg = Nothing }

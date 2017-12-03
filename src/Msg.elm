@@ -10,6 +10,7 @@ type Msg
   | AddResourceToProject Resource
   | ShowDetails Resource
   | HideDetails Resource
+  | ToggleResourceDropmenu Resource
 
 
 subscriptions : Model -> Sub Msg
