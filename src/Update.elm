@@ -9,7 +9,7 @@ import Debug exposing (log)
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update action ({resources} as model) =
+update action ({searchResults} as model) =
   case action of
     ChangeSearchString _ ->
       (model, Cmd.none)

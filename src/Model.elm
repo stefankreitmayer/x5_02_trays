@@ -8,12 +8,12 @@ import Element.Input as Input
 
 type alias Model =
   { ui : Ui
-  , resources : List Resource
+  , searchResults : List Resource
   , errorMsg : Maybe String }
 
 
 initialModel : Model
 initialModel =
   { ui = initialUi
-  , resources = Model.FakeData.hardcodedResources
+  , searchResults = Model.FakeData.exampleResources
   , errorMsg = Nothing }

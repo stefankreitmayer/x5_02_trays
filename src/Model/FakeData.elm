@@ -4,8 +4,8 @@ import Dict exposing (Dict)
 
 import Model.Resource exposing (..)
 
-hardcodedResources : List Resource
-hardcodedResources =
+exampleResources : List Resource
+exampleResources =
   [ Resource "Introduction to Machine Learning - Alex Smola" "http://alex.smola.org/drafts/thebook.pdf" "smola" "book" "" Dict.empty
   , Resource "A visual introduction to machine learning" "http://www.r2d3.us/visual-intro-to-machine-learning-part-1/" "a_visual" "article" "9 Aug 2015" Dict.empty
   , Resource "Friendly Introduction to Machine Learning - YouTube" "https://www.youtube.com/watch?v=IpGxLWOIZy4" "picodegree" "video" "9 Sep 2016" Dict.empty

@@ -11,6 +11,7 @@ import Style
 import Style.Color as Color
 import Style.Font as Font
 import Style.Border as Border
+import Style.Shadow as Shadow
 
 import Model exposing (..)
 import Model.Ui exposing (..)
@@ -20,10 +21,13 @@ import Msg exposing (..)
 
 
 type MyStyles
-    = NoStyle
-    | DebugStyle
-    | HeaderStyle
-    | SidebarStyle
+  = NoStyle
+  | DebugStyle
+  | HeaderStyle
+  | SidebarStyle
+  | SearchResultStyle
+  | ScrollContainerStyle
+  | NumberOfResultsStyle
 
 
 stylesheet =
@@ -41,13 +45,24 @@ stylesheet =
       [ Color.background <| Color.rgb 50 50 50
       , Color.text <| Color.white
       ]
+    , Style.style SearchResultStyle
+      [ Color.background <| Color.white
+      , Color.text <| Color.black
+      , Shadow.simple
+      ]
+    , Style.style ScrollContainerStyle
+      [ Style.prop "overflow" "scroll"
+      ]
+    , Style.style NumberOfResultsStyle
+      [ Color.text <| Color.rgb 120 120 120
+      ]
     ]
 
 
 view : Model -> Html Msg
 view ({ui} as model) =
   viewport stylesheet <|
-  column NoStyle [ height fill ] [ renderPageHeader, renderPageBody ]
+  column NoStyle [ height fill ] [ renderPageHeader, renderPageBody model ]
 
 
 renderPageHeader =
@@ -55,10 +70,10 @@ renderPageHeader =
     [ el NoStyle [] (text "x5gon") ]
 
 
-renderPageBody =
+renderPageBody model =
   row DebugStyle [ height fill ]
     [ renderSideBar
-    , renderCatalogue
+    , renderCatalogue model
     , renderTrolley
     ]
 
@@ -69,19 +84,47 @@ renderSideBar =
     ]
 
 
-renderCatalogue =
+renderCatalogue model =
+  column NoStyle [ width fill, padding 10, spacing 10 ]
+    [ renderSearchTextField
+    , renderSearchResults model.searchResults
+    ]
+
+
+renderSearchTextField =
   -- TODO wrap in search node, see http://package.elm-lang.org/packages/mdgriffith/style-elements/4.2.1/Element
+  Input.search NoStyle [ padding 3 ]
+    { onChange = ChangeSearchString
+    , value = "machine learning introduction"
+    , label = Input.labelLeft <| el NoStyle [ padding 3 ] (text "Search for topic:")
+    , options = []
+    }
+
+
+renderSearchResults : List Resource -> Element MyStyles variation msg
+renderSearchResults resources =
+  resources
+  |> List.map renderSearchResult
+  |> (::) (renderNumberOfSearchResults (List.length resources))
+  |> column NoStyle [ width fill, spacing 10 ]
+  |> List.singleton
+  |> column ScrollContainerStyle [ width fill, height fill, spacing 10 ]
+
+
+renderSearchResult resource =
+  el SearchResultStyle [ padding 10 ] (text resource.title)
+
+
+renderNumberOfSearchResults : Int -> Element MyStyles variation msg
+renderNumberOfSearchResults n =
   let
-      label = Input.labelLeft <| el NoStyle [] (text "Search topic:")
+      str =
+        case n of
+          0 -> "No results"
+          1 -> "1 result"
+          _ -> (toString n) ++ " results"
   in
-      column NoStyle [ width fill, padding 10 ]
-        [ Input.search NoStyle []
-          { onChange = ChangeSearchString
-          , value = "computational thinking"
-          , label = label
-          , options = []
-          }
-        ]
+      el NumberOfResultsStyle [] (text str)
 
 
 renderTrolley =
