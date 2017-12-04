@@ -5,7 +5,7 @@ import Color exposing (..)
 
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onClick)
+import Element.Events exposing (onClick, onCheck)
 import Element.Input as Input
 
 import Style
@@ -32,6 +32,7 @@ type MyStyles
   | HintStyle
   | ProjectStyle
   | DropmenuStyle
+  | EllipsisStyle
 
 
 stylesheet =
@@ -75,6 +76,9 @@ stylesheet =
       , Color.border <| Color.rgb 200 200 200
       , Border.all 1
       , Shadow.simple
+      ]
+    , Style.style EllipsisStyle
+      [ Style.opacity 0.66
       ]
     ]
 
@@ -140,7 +144,7 @@ renderSearchResult model resource =
         button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
   in
       row NoStyle [ spacing 10 ]
-        [ renderResourceInSearchResults model resource
+        [ renderSearchResultResource model resource
         , addButton
         ]
 
@@ -160,60 +164,66 @@ renderNumberOfSearchResults n =
 renderProject model =
   column ProjectStyle [ width (percent 60), padding 10, spacing 10 ]
     [ h2 H2Style [] (text "My dummy project")
-    , renderProjectResourceList model
+    , renderItems model
     ]
 
 
-renderProjectResourceList : Model -> Element MyStyles variation Msg
-renderProjectResourceList model =
+renderItems : Model -> Element MyStyles variation Msg
+renderItems model =
   let
       resources = model.projectResources
   in
       case resources of
         [] ->
-          el HintStyle [] (text "To build your project, search for a topic and start adding resources.")
+          el HintStyle [] (text "To build your project, search for a topic and start adding items.")
 
         _ ->
           resources
-          |> List.map (renderResourceInProject model)
+          |> List.map (renderItem model)
           |> column NoStyle [ width fill, spacing 10 ]
           |> List.singleton
           |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
 
-renderResourceInSearchResults model resource =
+renderSearchResultResource model resource =
   row ResourceStyle [ padding 10, spacing 10, width fill ]
     [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
     , column NoStyle [ spacing 3, width fill ]
       [ paragraph ResourceTitleStyle [] [ text resource.title ]
       , el HintStyle [ width fill ] (text resource.date)
       , el NoStyle [ width fill, alignRight ] (text resource.kind)
-      , renderResourceDetailsCollapsible model resource
+      , renderSearchResultDetails model resource
       ]
     ]
 
 
-renderResourceInProject model resource =
+renderItem model resource =
   row ResourceStyle [ padding 10, spacing 10, width fill ]
     [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
     , column NoStyle [ spacing 3, width fill ]
       [ paragraph ResourceTitleStyle [] [ text resource.title ]
       , el HintStyle [ width fill ] (text resource.date)
       , el NoStyle [ width fill, alignRight ] (text resource.kind)
-      , renderResourceDetailsStatic model resource
+      , renderItemDetails model resource
       ]
-    , column NoStyle []
-      [ decorativeImage NoStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
-        |> button NoStyle [ onClick (ToggleResourceDropmenu resource) ]
-        |> renderResourceInProjectDropmenu model resource
+    , column NoStyle [ spacing 10 ]
+      [ decorativeImage EllipsisStyle [ width (px 20), alignRight ] { src = "images/icons/ellipsis.png" }
+        |> button NoStyle [ onClick (ToggleItemDropmenu resource) ]
+        |> renderItemDropmenu model resource
+        , Input.checkbox NoStyle []
+            { onChange = ToggleItemOptional resource
+            , checked = isItemOptional model resource
+            , label = el NoStyle [] (text "optional")
+            , options = []
+            }
       ]
     ]
 
 
-renderResourceDetailsCollapsible model resource =
+renderSearchResultDetails model resource =
   let
       (collapseButton, details) =
-        if List.member resource.url model.expandedResourcesByUrl then
+        if List.member resource.url model.expandedSearchResults then
           ( button NoStyle [ paddingXY 4 1, onClick (HideDetails resource), alignRight ] (text "Hide")
           , [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
           )
@@ -225,13 +235,13 @@ renderResourceDetailsCollapsible model resource =
         (collapseButton :: details)
 
 
-renderResourceDetailsStatic model resource =
+renderItemDetails model resource =
   column NoStyle [ spacing 3 ]
     [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
 
 
-renderResourceInProjectDropmenu model resource button =
-  if model.resourceDropmenu == Just resource then
+renderItemDropmenu model resource button =
+  if model.itemDropmenu == Just resource then
     button
     |> below [ el DropmenuStyle [ alignRight, paddingXY 10 5, onClick (RemoveResourceFromProject resource) ] (text "Remove") ]
   else

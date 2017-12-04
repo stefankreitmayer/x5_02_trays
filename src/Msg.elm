@@ -10,8 +10,9 @@ type Msg
   | AddResourceToProject Resource
   | ShowDetails Resource
   | HideDetails Resource
-  | ToggleResourceDropmenu Resource
+  | ToggleItemDropmenu Resource
   | RemoveResourceFromProject Resource
+  | ToggleItemOptional Resource Bool
 
 
 subscriptions : Model -> Sub Msg

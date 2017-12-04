@@ -1,11 +1,12 @@
 module Update exposing (..)
 
+import Set
+import Debug exposing (log)
+
 
 import Model exposing (..)
 import Model.Ui exposing (..)
 import Msg exposing (..)
-
-import Debug exposing (log)
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -13,7 +14,7 @@ update action oldModel =
   let
       model =
         case action of
-          ToggleResourceDropmenu _ ->
+          ToggleItemDropmenu _ ->
             oldModel
           _ ->
             closeDropmenu oldModel
@@ -26,20 +27,28 @@ update action oldModel =
           ({ model | projectResources = resource :: model.projectResources }, Cmd.none)
 
         ShowDetails resource ->
-          ({ model | expandedResourcesByUrl = resource.url :: model.expandedResourcesByUrl}, Cmd.none)
+          ({ model | expandedSearchResults = resource.url :: model.expandedSearchResults}, Cmd.none)
 
         HideDetails resource ->
-          ({ model | expandedResourcesByUrl = model.expandedResourcesByUrl |> List.filter (\url -> not (url == resource.url))}, Cmd.none)
+          ({ model | expandedSearchResults = model.expandedSearchResults |> List.filter (\url -> not (url == resource.url))}, Cmd.none)
 
-        ToggleResourceDropmenu resource ->
+        ToggleItemDropmenu resource ->
           let
-              newState = if model.resourceDropmenu == Just resource then Nothing else Just resource
+              newState = if model.itemDropmenu == Just resource then Nothing else Just resource
           in
-              ({ model | resourceDropmenu = newState }, Cmd.none)
+              ({ model | itemDropmenu = newState }, Cmd.none)
 
         RemoveResourceFromProject resource ->
-          ({ model | projectResources = model.projectResources |> List.filter (\r -> not (r == resource)) }, Cmd.none)
+          ({ model | projectResources = model.projectResources |> List.filter (\res -> not (res == resource)) }, Cmd.none)
+
+        ToggleItemOptional resource checked ->
+          let
+              optionalItems =
+                model.optionalItems |> (if checked then Set.insert else Set.remove) resource.url
+          in
+              ({ model | optionalItems = optionalItems }, Cmd.none)
+
 
 closeDropmenu : Model -> Model
 closeDropmenu model =
-  { model | resourceDropmenu = Nothing }
+  { model | itemDropmenu = Nothing }
