@@ -7,6 +7,7 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick, onCheck)
 import Element.Input as Input
+import Element.Keyed as Keyed
 
 import Style
 import Style.Color as Color
@@ -191,7 +192,7 @@ renderItems model =
         _ ->
           resources
           |> List.map (renderItem model)
-          |> column NoStyle [ width fill, spacing 10 ]
+          |> Keyed.column NoStyle [ width fill, spacing 10 ]
           |> List.singleton
           |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
@@ -208,31 +209,37 @@ renderSearchResultResource model resource =
     ]
 
 
+-- returns a Keyed element
+renderItem : Model -> Resource -> (String, Element MyStyles variation Msg)
 renderItem model resource =
-  column ResourceStyle [ padding 10, spacing 10, width fill ]
-    [ row NoStyle [ spacing 10 ]
-        [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
-        , column NoStyle [ spacing 3, width fill ]
-          [ paragraph ResourceTitleStyle [] [ text resource.title ]
-          , el HintStyle [ width fill ] (text resource.date)
-          , el NoStyle [ width fill, alignRight ] (text resource.kind)
-          , renderItemDetails model resource
+  let
+      element =
+        column ResourceStyle [ padding 10, spacing 10, width fill ]
+          [ row NoStyle [ spacing 10 ]
+              [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
+              , column NoStyle [ spacing 3, width fill ]
+                [ paragraph ResourceTitleStyle [] [ text resource.title ]
+                , el HintStyle [ width fill ] (text resource.date)
+                , el NoStyle [ width fill, alignRight ] (text resource.kind)
+                , renderItemDetails model resource
+                ]
+              , column NoStyle [ spacing 10 ]
+                [ decorativeImage EllipsisStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
+                  |> button NoStyle [ onClick (ToggleItemDropmenu resource), alignRight ]
+                  |> renderItemDropmenu model resource
+                  |> el NoStyle []
+                  , Input.checkbox NoStyle []
+                      { onChange = ToggleItemOptional resource
+                      , checked = isItemOptional model resource
+                      , label = el NoStyle [] (text "optional")
+                      , options = []
+                      }
+                ]
+              ]
+            , renderItemAnnotations model resource
           ]
-        , column NoStyle [ spacing 10 ]
-          [ decorativeImage EllipsisStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
-            |> button NoStyle [ onClick (ToggleItemDropmenu resource), alignRight ]
-            |> renderItemDropmenu model resource
-            |> el NoStyle []
-            , Input.checkbox NoStyle []
-                { onChange = ToggleItemOptional resource
-                , checked = isItemOptional model resource
-                , label = el NoStyle [] (text "optional")
-                , options = []
-                }
-          ]
-        ]
-      , renderItemAnnotations model resource
-    ]
+  in
+      (resource.url, element)
 
 
 renderSearchResultDetails model resource =
@@ -256,14 +263,18 @@ renderItemDetails model resource =
 
 
 renderItemAnnotations model resource =
-  column AnnotationsStyle [ spacing 3, paddingTop 10 ]
-    [ Input.text AnnotationInputStyle []
-      { onChange = ChangeAnnotation resource
-      , value = ""
-      , label = Input.labelLeft <| el NoStyle [] (text "Comment")
-      , options = []
-      }
-    ]
+  let
+      renderAttribute name =
+        Input.text AnnotationInputStyle []
+          { onChange = ChangeAnnotation resource name
+          , value = getAnnotation model resource name
+          , label = Input.labelLeft <| el NoStyle [] (text name)
+          , options = []
+          }
+  in
+      column AnnotationsStyle [ spacing 3, paddingTop 10 ]
+        ([ "Workload", "Comment" ] |> List.map renderAttribute)
+
 
 
 renderItemDropmenu model resource button =

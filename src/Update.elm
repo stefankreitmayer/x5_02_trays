@@ -49,13 +49,8 @@ update action oldModel =
           in
               ({ model | optionalItems = optionalItems }, Cmd.none)
 
-        ChangeAnnotation resource annotationText ->
-          let
-              annotations =
-                model.annotations |> Dict.insert resource.url annotationText
-                -- |> log "annotations"
-          in
-              ({ model | annotations = annotations }, Cmd.none)
+        ChangeAnnotation resource name value ->
+          ({ model | annotations = model.annotations |> Dict.insert (resource.url, name) value }, Cmd.none)
 
 
 

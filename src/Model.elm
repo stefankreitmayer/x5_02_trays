@@ -16,7 +16,7 @@ type alias Model =
   , expandedSearchResults : List String
   , itemDropmenu : Maybe Resource
   , optionalItems : Set String
-  , annotations : Dict String String
+  , annotations : Dict (String, String) String
   , errorMsg : Maybe String }
 
 
@@ -34,3 +34,7 @@ initialModel =
 
 isItemOptional model resource =
   model.optionalItems |> Set.member resource.url
+
+
+getAnnotation model resource name =
+  model.annotations |> Dict.get (resource.url, name) |> Maybe.withDefault ""
