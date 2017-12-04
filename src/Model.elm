@@ -1,6 +1,7 @@
 module Model exposing (..)
 
 import Set exposing (Set)
+import Dict exposing (Dict)
 import Element.Input as Input
 
 import Model.Ui exposing (..)
@@ -15,6 +16,7 @@ type alias Model =
   , expandedSearchResults : List String
   , itemDropmenu : Maybe Resource
   , optionalItems : Set String
+  , annotations : Dict String String
   , errorMsg : Maybe String }
 
 
@@ -26,6 +28,7 @@ initialModel =
   , expandedSearchResults = []
   , itemDropmenu = Nothing
   , optionalItems = Set.empty
+  , annotations = Dict.empty
   , errorMsg = Nothing }
 
 

@@ -13,6 +13,7 @@ type Msg
   | ToggleItemDropmenu Resource
   | RemoveResourceFromProject Resource
   | ToggleItemOptional Resource Bool
+  | ChangeAnnotation Resource String
 
 
 subscriptions : Model -> Sub Msg

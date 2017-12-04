@@ -33,6 +33,8 @@ type MyStyles
   | ProjectStyle
   | DropmenuStyle
   | EllipsisStyle
+  | AnnotationsStyle
+  | AnnotationInputStyle
 
 
 stylesheet =
@@ -79,6 +81,15 @@ stylesheet =
       ]
     , Style.style EllipsisStyle
       [ Style.opacity 0.66
+      ]
+    , Style.style AnnotationsStyle
+      [ Border.top 1
+      , Color.border <| Color.rgb 200 200 200
+      ]
+    , Style.style AnnotationInputStyle
+      [ Border.bottom 1
+      , Color.border <| Color.rgb 200 200 200
+      , Shadow.simple
       ]
     ]
 
@@ -198,26 +209,29 @@ renderSearchResultResource model resource =
 
 
 renderItem model resource =
-  row ResourceStyle [ padding 10, spacing 10, width fill ]
-    [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
-    , column NoStyle [ spacing 3, width fill ]
-      [ paragraph ResourceTitleStyle [] [ text resource.title ]
-      , el HintStyle [ width fill ] (text resource.date)
-      , el NoStyle [ width fill, alignRight ] (text resource.kind)
-      , renderItemDetails model resource
-      ]
-    , column NoStyle [ spacing 10 ]
-      [ decorativeImage EllipsisStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
-        |> button NoStyle [ onClick (ToggleItemDropmenu resource), alignRight ]
-        |> renderItemDropmenu model resource
-        |> el NoStyle []
-        , Input.checkbox NoStyle []
-            { onChange = ToggleItemOptional resource
-            , checked = isItemOptional model resource
-            , label = el NoStyle [] (text "optional")
-            , options = []
-            }
-      ]
+  column ResourceStyle [ padding 10, spacing 10, width fill ]
+    [ row NoStyle [ spacing 10 ]
+        [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
+        , column NoStyle [ spacing 3, width fill ]
+          [ paragraph ResourceTitleStyle [] [ text resource.title ]
+          , el HintStyle [ width fill ] (text resource.date)
+          , el NoStyle [ width fill, alignRight ] (text resource.kind)
+          , renderItemDetails model resource
+          ]
+        , column NoStyle [ spacing 10 ]
+          [ decorativeImage EllipsisStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
+            |> button NoStyle [ onClick (ToggleItemDropmenu resource), alignRight ]
+            |> renderItemDropmenu model resource
+            |> el NoStyle []
+            , Input.checkbox NoStyle []
+                { onChange = ToggleItemOptional resource
+                , checked = isItemOptional model resource
+                , label = el NoStyle [] (text "optional")
+                , options = []
+                }
+          ]
+        ]
+      , renderItemAnnotations model resource
     ]
 
 
@@ -239,6 +253,17 @@ renderSearchResultDetails model resource =
 renderItemDetails model resource =
   column NoStyle [ spacing 3 ]
     [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
+
+
+renderItemAnnotations model resource =
+  column AnnotationsStyle [ spacing 3, paddingTop 10 ]
+    [ Input.text AnnotationInputStyle []
+      { onChange = ChangeAnnotation resource
+      , value = ""
+      , label = Input.labelLeft <| el NoStyle [] (text "Comment")
+      , options = []
+      }
+    ]
 
 
 renderItemDropmenu model resource button =

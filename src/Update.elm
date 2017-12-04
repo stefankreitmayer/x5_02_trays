@@ -1,6 +1,7 @@
 module Update exposing (..)
 
 import Set
+import Dict
 import Debug exposing (log)
 
 
@@ -47,6 +48,15 @@ update action oldModel =
                 model.optionalItems |> (if checked then Set.insert else Set.remove) resource.url
           in
               ({ model | optionalItems = optionalItems }, Cmd.none)
+
+        ChangeAnnotation resource annotationText ->
+          let
+              annotations =
+                model.annotations |> Dict.insert resource.url annotationText
+                -- |> log "annotations"
+          in
+              ({ model | annotations = annotations }, Cmd.none)
+
 
 
 closeDropmenu : Model -> Model
