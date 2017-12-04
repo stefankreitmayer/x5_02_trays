@@ -207,9 +207,10 @@ renderItem model resource =
       , renderItemDetails model resource
       ]
     , column NoStyle [ spacing 10 ]
-      [ decorativeImage EllipsisStyle [ width (px 20), alignRight ] { src = "images/icons/ellipsis.png" }
-        |> button NoStyle [ onClick (ToggleItemDropmenu resource) ]
+      [ decorativeImage EllipsisStyle [ width (px 20) ] { src = "images/icons/ellipsis.png" }
+        |> button NoStyle [ onClick (ToggleItemDropmenu resource), alignRight ]
         |> renderItemDropmenu model resource
+        |> el NoStyle []
         , Input.checkbox NoStyle []
             { onChange = ToggleItemOptional resource
             , checked = isItemOptional model resource
