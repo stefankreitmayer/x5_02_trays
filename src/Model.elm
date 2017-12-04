@@ -38,3 +38,7 @@ isItemOptional model resource =
 
 getAnnotation model resource name =
   model.annotations |> Dict.get (resource.url, name) |> Maybe.withDefault ""
+
+
+itemAttributes =
+  [ "Workload (hours)", "Comments" ]

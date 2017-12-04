@@ -2,6 +2,7 @@ module View exposing (view)
 
 import Html exposing (Html)
 import Color exposing (..)
+-- import Debug exposing (log)
 
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -36,6 +37,8 @@ type MyStyles
   | EllipsisStyle
   | AnnotationsStyle
   | AnnotationInputStyle
+  | ProjectOverviewStyle
+  | ProjectOverviewHeadingStyle
 
 
 stylesheet =
@@ -85,12 +88,23 @@ stylesheet =
       ]
     , Style.style AnnotationsStyle
       [ Border.top 1
+      , Border.left 1
       , Color.border <| Color.rgb 200 200 200
+      , Color.background <| Color.rgb 230 230 230
       ]
     , Style.style AnnotationInputStyle
       [ Border.bottom 1
       , Color.border <| Color.rgb 200 200 200
       , Shadow.simple
+      ]
+    , Style.style ProjectOverviewStyle
+      [ Color.background <| Color.white
+      , Color.border <| Color.rgb 100 100 100
+      , Border.top 1
+      ]
+    , Style.style ProjectOverviewHeadingStyle
+      [ Font.size 16
+      , Font.weight 600
       ]
     ]
 
@@ -174,27 +188,46 @@ renderNumberOfSearchResults n =
 
 
 renderProject model =
-  column ProjectStyle [ width (percent 60), padding 10, spacing 10 ]
-    [ h2 H2Style [] (text "My dummy project")
-    , renderItems model
+  column ProjectStyle [ width (percent 60) ]
+    [ column NoStyle [ height fill, padding 10, spacing 10 ]
+        [ h2 H2Style [] (text "My dummy project")
+        , renderItems model
+        ]
+    , renderProjectOverview model
     ]
 
 
 renderItems : Model -> Element MyStyles variation Msg
 renderItems model =
-  let
-      resources = model.projectResources
-  in
-      case resources of
-        [] ->
-          el HintStyle [] (text "To build your project, search for a topic and start adding items.")
+  case model.projectResources of
+    [] ->
+      el HintStyle [ height fill ] (text "To build your project, search for a topic and start adding items.")
 
-        _ ->
-          resources
-          |> List.map (renderItem model)
-          |> Keyed.column NoStyle [ width fill, spacing 10 ]
-          |> List.singleton
-          |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
+    resources ->
+      resources
+      |> List.map (renderItem model)
+      |> Keyed.column NoStyle [ width fill, height fill, spacing 10 ]
+      |> List.singleton
+      |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
+
+
+renderProjectOverview : Model -> Element MyStyles variation Msg
+renderProjectOverview model =
+  column ProjectOverviewStyle [ padding 10, spacing 5 ]
+    [ h3 ProjectOverviewHeadingStyle [] (text "Project Summary")
+    , renderTotalWorkload model
+    ]
+
+
+renderTotalWorkload model =
+  let
+      hours =
+        model.projectResources
+        |> List.map (workloadInHours model)
+        |> List.sum
+        |> toString
+  in
+     "Total workload: " ++ hours ++ " hours" |> text |> el NoStyle []
 
 
 renderSearchResultResource model resource =
@@ -272,9 +305,8 @@ renderItemAnnotations model resource =
           , options = []
           }
   in
-      column AnnotationsStyle [ spacing 3, paddingTop 10 ]
-        ([ "Workload", "Comment" ] |> List.map renderAttribute)
-
+      column AnnotationsStyle [ spacing 3, padding 5 ]
+        (itemAttributes |> List.map renderAttribute)
 
 
 renderItemDropmenu model resource button =
