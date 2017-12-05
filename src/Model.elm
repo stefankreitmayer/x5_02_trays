@@ -41,4 +41,4 @@ getAnnotation model resource name =
 
 
 itemAttributes =
-  [ "Workload (hours)", "Comments" ]
+  [ attrTextWorkload, "Comments" ]

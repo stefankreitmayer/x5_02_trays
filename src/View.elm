@@ -190,7 +190,7 @@ renderNumberOfSearchResults n =
 renderProject model =
   column ProjectStyle [ width (percent 60) ]
     [ column NoStyle [ height fill, padding 10, spacing 10 ]
-        [ h2 H2Style [] (text "My dummy project")
+        [ h2 H2Style [] (text "My Project")
         , renderItems model
         ]
     , renderProjectOverview model
