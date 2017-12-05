@@ -2,6 +2,7 @@ module View exposing (view)
 
 import Html exposing (Html)
 import Color exposing (..)
+import Set exposing (Set)
 -- import Debug exposing (log)
 
 import Element exposing (..)
@@ -39,6 +40,7 @@ type MyStyles
   | AnnotationInputStyle
   | ProjectOverviewStyle
   | ProjectOverviewHeadingStyle
+  | TagStyle
 
 
 stylesheet =
@@ -105,6 +107,12 @@ stylesheet =
     , Style.style ProjectOverviewHeadingStyle
       [ Font.size 16
       , Font.weight 600
+      ]
+    , Style.style TagStyle
+      [ Border.all 1
+      , Border.rounded 2
+      , Color.border <| Color.rgb 200 200 200
+      , Font.size 13
       ]
     ]
 
@@ -236,7 +244,7 @@ renderSearchResultResource model resource =
     , column NoStyle [ spacing 3, width fill ]
       [ paragraph ResourceTitleStyle [] [ text resource.title ]
       , el HintStyle [ width fill ] (text resource.date)
-      , el NoStyle [ width fill, alignRight ] (text resource.kind)
+      , renderTagList resource
       , renderSearchResultDetails model resource
       ]
     ]
@@ -253,7 +261,7 @@ renderItem model resource =
               , column NoStyle [ spacing 3, width fill ]
                 [ paragraph ResourceTitleStyle [] [ text resource.title ]
                 , el HintStyle [ width fill ] (text resource.date)
-                , el NoStyle [ width fill, alignRight ] (text resource.kind)
+                , renderTagList resource
                 , renderItemDetails model resource
                 ]
               , column NoStyle [ spacing 10 ]
@@ -273,6 +281,14 @@ renderItem model resource =
           ]
   in
       (resource.url, element)
+
+
+renderTagList resource =
+  resource.tags
+  |> Set.toList
+  |> List.map text
+  |> List.map (el TagStyle [ paddingXY 2 1 ])
+  |> row NoStyle [ spacing 5 ]
 
 
 renderSearchResultDetails model resource =

@@ -1,14 +1,15 @@
 module Model.Resource exposing (..)
 
+import Set exposing (Set)
 import Dict exposing (Dict)
 
 type alias Resource =
   { title : String
   , url : String
   , coverImageStub : String
-  , kind : String
   , date : String
-  , annotations : Dict String String }
+  , tags : Set String
+  , features : Dict String String }
 
 
 workloadInHours model resource =
