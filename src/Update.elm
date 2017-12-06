@@ -7,6 +7,7 @@ import Debug exposing (log)
 
 import Model exposing (..)
 import Model.Ui exposing (..)
+import Model.Resource exposing (..)
 import Msg exposing (..)
 
 
@@ -25,7 +26,7 @@ update action oldModel =
           (model, Cmd.none)
 
         AddResourceToProject resource ->
-          ({ model | projectResources = resource :: model.projectResources }, Cmd.none)
+          ({ model | projectResources = resource :: model.projectResources } |> annotationsFromFeatures resource, Cmd.none)
 
         ShowDetails resource ->
           ({ model | expandedSearchResults = resource.url :: model.expandedSearchResults}, Cmd.none)
@@ -57,3 +58,18 @@ update action oldModel =
 closeDropmenu : Model -> Model
 closeDropmenu model =
   { model | itemDropmenu = Nothing }
+
+
+annotationsFromFeatures : Resource -> Model -> Model
+annotationsFromFeatures resource model =
+  let
+      annotations =
+        case resource.features |> Dict.get attrTextWorkload of
+          Nothing ->
+            model.annotations
+
+          Just hours ->
+            model.annotations
+            |> Dict.insert (resource.url, attrTextWorkload) hours
+  in
+      { model | annotations = annotations }

@@ -40,5 +40,5 @@ getAnnotation model resource name =
   model.annotations |> Dict.get (resource.url, name) |> Maybe.withDefault ""
 
 
-itemAttributes =
+itemAnnotation =
   [ attrTextWorkload, "Comments" ]

@@ -313,7 +313,7 @@ renderItemDetails model resource =
 
 renderItemAnnotations model resource =
   let
-      renderAttribute name =
+      renderAnnotation name =
         Input.text AnnotationInputStyle []
           { onChange = ChangeAnnotation resource name
           , value = getAnnotation model resource name
@@ -322,7 +322,7 @@ renderItemAnnotations model resource =
           }
   in
       column AnnotationsStyle [ spacing 3, padding 5 ]
-        (itemAttributes |> List.map renderAttribute)
+        (itemAnnotation |> List.map renderAnnotation)
 
 
 renderItemDropmenu model resource button =
