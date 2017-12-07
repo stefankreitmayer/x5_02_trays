@@ -17,6 +17,7 @@ type alias Model =
   , itemDropmenu : Maybe Resource
   , optionalItems : Set String
   , annotations : Dict (String, String) String
+  , relevantTags : Set String
   , errorMsg : Maybe String }
 
 
@@ -29,6 +30,7 @@ initialModel =
   , itemDropmenu = Nothing
   , optionalItems = Set.empty
   , annotations = Dict.empty
+  , relevantTags = Set.empty
   , errorMsg = Nothing }
 
 

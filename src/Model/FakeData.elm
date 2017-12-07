@@ -28,6 +28,6 @@ exampleResources =
   , Resource "A Non-Technical Introduction to Machine Learning – SafeGraph" "https://blog.safegraph.com/a-non-technical-introduction-to-machine-learning-b49fce202ae8?gi=ccaf0749079" "safegraph" "2017" (Set.fromList [ "article" ]) (Dict.singleton attrTextWorkload ".5")
   , Resource "A Brief Introduction to Machine Learning for Engineers" "https://arxiv.org/abs/1709.02840" "brief" "2017" (Set.fromList [ "book" ]) (Dict.singleton attrTextWorkload "15")
   , Resource "Intro To Machine Learning - Python & R In Data Science" "https://www.udemy.com/machinelearning" "python" "" (Set.fromList [ "course", "r", "python" ]) (Dict.singleton attrTextWorkload "30")
-  , Resource "London Machine Learning Meetup" "https://www.meetup.com/London-Machine-Learning-Meetup" "meetup_london" "" (Set.fromList [ "meetup", "london", "11 December" ]) (Dict.singleton attrTextWorkload "2")
+  , Resource "London Machine Learning Meetup" "https://www.meetup.com/London-Machine-Learning-Meetup" "meetup_london" "" (Set.fromList [ "meetup", "london", "11 december" ]) (Dict.singleton attrTextWorkload "2")
   , Resource "San Diego Artificial Intelligence & Deep Learning" "https://www.meetup.com/San-Diego-AI-Deep-Learning/" "meetup_sandiego" "" (Set.fromList [ "meetup", "san diego" ]) (Dict.singleton attrTextWorkload "2")
   , Resource "Machine Learning Guide" "http://ocdevel.com/podcasts/machine-learning" "ocdevel" "" (Set.fromList [ "podcast", "entertaining", "downloadable", "audio only" ]) (Dict.singleton attrTextWorkload "25") ]

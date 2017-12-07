@@ -40,7 +40,10 @@ type MyStyles
   | AnnotationInputStyle
   | ProjectOverviewStyle
   | ProjectOverviewHeadingStyle
+  | H4Style
   | TagStyle
+  | AddButtonCircleStyle
+  | CloseButtonStyle
 
 
 stylesheet =
@@ -113,6 +116,16 @@ stylesheet =
       , Border.rounded 2
       , Color.border <| Color.rgb 200 200 200
       , Font.size 13
+      ]
+    , Style.style H4Style
+      [ Font.weight 600
+      ]
+    , Style.style AddButtonCircleStyle
+      [ Color.border <| Color.rgb 100 100 100
+      , Border.all 1
+      ]
+    , Style.style CloseButtonStyle
+      [ Color.text <| Color.rgb 70 70 70
       ]
     ]
 
@@ -224,6 +237,10 @@ renderProjectOverview model =
   column ProjectOverviewStyle [ padding 10, spacing 5 ]
     [ h3 ProjectOverviewHeadingStyle [] (text "Project Summary")
     , renderTotalWorkload model
+    , h4 H4Style [] (text "Relevant tags")
+    , renderRelevantTags model
+    , h4 H4Style [] (text "Suggested tags (click to add)")
+    , renderSuggestedTags model
     ]
 
 
@@ -236,6 +253,25 @@ renderTotalWorkload model =
         |> toString
   in
      "Total workload: " ++ hours ++ " hours" |> text |> el NoStyle []
+
+
+renderRelevantTags model =
+  model.relevantTags
+  |> Set.toList
+  |> List.map renderRelevantTag
+  |> Keyed.wrappedRow NoStyle [ spacing 5 ]
+
+
+renderSuggestedTags model =
+  let
+      tags =
+        model.searchResults
+        |> List.foldr (\resource tags -> tags |> Set.union resource.tags) Set.empty
+  in
+      Set.diff tags model.relevantTags
+      |> Set.toList
+      |> List.map renderSuggestedTag
+      |> Keyed.wrappedRow NoStyle [ spacing 5 ]
 
 
 renderSearchResultResource model resource =
@@ -286,9 +322,26 @@ renderItem model resource =
 renderTagList resource =
   resource.tags
   |> Set.toList
-  |> List.map text
-  |> List.map (el TagStyle [ paddingXY 2 1 ])
+  |> List.map renderTag
   |> row NoStyle [ spacing 5 ]
+
+
+renderTag str =
+  el TagStyle [ paddingXY 2 1 ] (text str)
+
+
+renderRelevantTag str =
+  row TagStyle [ paddingXY 2 1, spacing 3 ]
+  [ text str
+  -- alternatively, use "✖"
+  , text "×" |> button CloseButtonStyle [ onClick (RemoveRelevantTag str) ]
+  ]
+  |> (,) str
+
+
+renderSuggestedTag str =
+  button TagStyle [ paddingXY 2 1, onClick (AddRelevantTag str) ] (text str)
+  |> (,) str
 
 
 renderSearchResultDetails model resource =
