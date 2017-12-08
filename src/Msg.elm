@@ -14,8 +14,8 @@ type Msg
   | RemoveResourceFromProject Resource
   | ToggleItemOptional Resource Bool
   | ChangeAnnotation Resource String String
-  | AddRelevantTag String
-  | RemoveRelevantTag String
+  -- | AddRelevantTag String
+  -- | RemoveRelevantTag String
 
 
 subscriptions : Model -> Sub Msg

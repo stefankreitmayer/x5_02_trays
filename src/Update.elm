@@ -54,12 +54,12 @@ update action oldModel =
           ({ model | annotations = model.annotations |> Dict.insert (resource.url, name) value }, Cmd.none)
 
 
-        AddRelevantTag name ->
-          ({ model | relevantTags = model.relevantTags |> Set.insert name }, Cmd.none)
+        -- AddRelevantTag name ->
+        --   ({ model | relevantTags = model.relevantTags |> Set.insert name }, Cmd.none)
 
 
-        RemoveRelevantTag name ->
-          ({ model | relevantTags = model.relevantTags |> Set.remove name }, Cmd.none)
+        -- RemoveRelevantTag name ->
+        --   ({ model | relevantTags = model.relevantTags |> Set.remove name }, Cmd.none)
 
 
 

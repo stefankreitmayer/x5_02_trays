@@ -27,7 +27,6 @@ import Msg exposing (..)
 type MyStyles
   = NoStyle
   | DebugStyle
-  | H2Style
   | HeaderStyle
   | SidebarStyle
   | ResourceStyle
@@ -39,11 +38,14 @@ type MyStyles
   | AnnotationsStyle
   | AnnotationInputStyle
   | ProjectOverviewStyle
-  | ProjectOverviewHeadingStyle
+  | ProjectTitleStyle
   | H4Style
   | TagStyle
   | AddButtonCircleStyle
   | CloseButtonStyle
+  | ModalityDistributionStyle
+  | ModalityStylePresent
+  | ModalityStyleNotPresent
 
 
 stylesheet =
@@ -52,10 +54,6 @@ stylesheet =
     , Style.style DebugStyle
       [ Color.background <| Color.rgb 210 210 210
       , Border.all 2
-      ]
-    , Style.style H2Style
-      [ Color.text <| Color.rgb 50 50 50
-      , Font.size 24
       ]
     , Style.style HeaderStyle
       [ Color.background <| Color.rgb 0 100 180
@@ -103,13 +101,17 @@ stylesheet =
       , Shadow.simple
       ]
     , Style.style ProjectOverviewStyle
-      [ Color.background <| Color.white
-      , Color.border <| Color.rgb 100 100 100
-      , Border.top 1
+      [ Color.background <| Color.rgb 80 80 80
+      , Color.text <| Color.rgb 230 230 230
+      , Shadow.simple
       ]
-    , Style.style ProjectOverviewHeadingStyle
-      [ Font.size 16
-      , Font.weight 600
+    -- , Style.style ProjectTitleStyle
+    --   [ Font.size 16
+    --   , Font.weight 600
+    --   ]
+    , Style.style ProjectTitleStyle
+      [ Color.text <| Color.rgb 40 40 40
+      , Font.size 24
       ]
     , Style.style TagStyle
       [ Border.all 1
@@ -126,6 +128,15 @@ stylesheet =
       ]
     , Style.style CloseButtonStyle
       [ Color.text <| Color.rgb 70 70 70
+      ]
+    , Style.style ModalityDistributionStyle
+      [ Color.background <| Color.rgb 50 50 50
+      ]
+    , Style.style ModalityStylePresent
+      [ Color.text <| Color.rgb 80 180 80
+      ]
+    , Style.style ModalityStyleNotPresent
+      [ Color.text <| Color.rgb 180 180 180
       ]
     ]
 
@@ -210,11 +221,10 @@ renderNumberOfSearchResults n =
 
 renderProject model =
   column ProjectStyle [ width (percent 60) ]
-    [ column NoStyle [ height fill, padding 10, spacing 10 ]
-        [ h2 H2Style [] (text "My Project")
-        , renderItems model
+    [ renderProjectOverview model
+    , column NoStyle [ height fill, padding 10, spacing 10 ]
+        [ renderItems model
         ]
-    , renderProjectOverview model
     ]
 
 
@@ -222,7 +232,7 @@ renderItems : Model -> Element MyStyles variation Msg
 renderItems model =
   case model.projectResources of
     [] ->
-      el HintStyle [ height fill ] (text "To build your project, search for a topic and start adding items.")
+      el HintStyle [ height fill, paddingTop 10 ] (text "To build your project, search for a topic and start adding items.")
 
     resources ->
       resources
@@ -235,12 +245,13 @@ renderItems model =
 renderProjectOverview : Model -> Element MyStyles variation Msg
 renderProjectOverview model =
   column ProjectOverviewStyle [ padding 10, spacing 5 ]
-    [ h3 ProjectOverviewHeadingStyle [] (text "Project Summary")
+    [ h2 ProjectTitleStyle [] (text "My Project")
     , renderTotalWorkload model
-    , h4 H4Style [] (text "Relevant tags")
-    , renderRelevantTags model
-    , h4 H4Style [] (text "Suggested tags (click to add)")
-    , renderSuggestedTags model
+    , renderModalityDistribution model
+    -- , h4 H4Style [] (text "Relevant tags")
+    -- , renderRelevantTags model
+    -- , h4 H4Style [] (text "Suggested tags (click to add)")
+    -- , renderSuggestedTags model
     ]
 
 
@@ -255,23 +266,46 @@ renderTotalWorkload model =
      "Total workload: " ++ hours ++ " hours" |> text |> el NoStyle []
 
 
-renderRelevantTags model =
-  model.relevantTags
-  |> Set.toList
-  |> List.map renderRelevantTag
-  |> Keyed.wrappedRow NoStyle [ spacing 5 ]
-
-
-renderSuggestedTags model =
+renderModalityDistribution model =
   let
-      tags =
-        model.searchResults
-        |> List.foldr (\resource tags -> tags |> Set.union resource.tags) Set.empty
+      resources = model.projectResources
+      count fn =
+        model.projectResources
+        |> List.map (\resource -> if fn resource then 1 else 0)
+        |> List.sum
+      modality label fn =
+        label ++ ": " ++ (count fn |> toString)
+        |> text
+        |> el (if (count fn > 0) then ModalityStylePresent else ModalityStyleNotPresent) []
   in
-      Set.diff tags model.relevantTags
-      |> Set.toList
-      |> List.map renderSuggestedTag
-      |> Keyed.wrappedRow NoStyle [ spacing 5 ]
+      column ModalityDistributionStyle [ spacing 3, padding 10 ]
+        [ modality "To watch" (\{tags} -> (tags |> Set.member "video") || (tags |> Set.member "course"))
+        , modality "To listen" (\{tags} -> (tags |> Set.member "podcast") || (tags |> Set.member "audiobook"))
+        , modality "To read" (\{tags} -> (tags |> Set.member "article") || (tags |> Set.member "book"))
+        , modality "To practice" (\{tags} -> (tags |> Set.member "course") || (tags |> Set.member "quiz"))
+        , modality "To socialise" (\{tags} -> (tags |> Set.member "meetup group"))
+        , modality "To attend" (\{tags} -> (tags |> Set.member "event"))
+        , modality "To visit" (\{tags} -> (tags |> Set.member "meetup group"))
+        ]
+
+
+-- renderRelevantTags model =
+--   model.relevantTags
+--   |> Set.toList
+--   |> List.map renderRelevantTag
+--   |> Keyed.wrappedRow NoStyle [ spacing 5 ]
+
+
+-- renderSuggestedTags model =
+--   let
+--       tags =
+--         model.searchResults
+--         |> List.foldr (\resource tags -> tags |> Set.union resource.tags) Set.empty
+--   in
+--       Set.diff tags model.relevantTags
+--       |> Set.toList
+--       |> List.map renderSuggestedTag
+--       |> Keyed.wrappedRow NoStyle [ spacing 5 ]
 
 
 renderSearchResultResource model resource =
@@ -330,18 +364,18 @@ renderTag str =
   el TagStyle [ paddingXY 2 1 ] (text str)
 
 
-renderRelevantTag str =
-  row TagStyle [ paddingXY 2 1, spacing 3 ]
-  [ text str
-  -- alternatively, use "✖"
-  , text "×" |> button CloseButtonStyle [ onClick (RemoveRelevantTag str) ]
-  ]
-  |> (,) str
+-- renderRelevantTag str =
+--   row TagStyle [ paddingXY 2 1, spacing 3 ]
+--   [ text str
+--   -- alternatively, use "✖"
+--   , text "×" |> button CloseButtonStyle [ onClick (RemoveRelevantTag str) ]
+--   ]
+--   |> (,) str
 
 
-renderSuggestedTag str =
-  button TagStyle [ paddingXY 2 1, onClick (AddRelevantTag str) ] (text str)
-  |> (,) str
+-- renderSuggestedTag str =
+--   button TagStyle [ paddingXY 2 1, onClick (AddRelevantTag str) ] (text str)
+--   |> (,) str
 
 
 renderSearchResultDetails model resource =
