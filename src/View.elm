@@ -20,6 +20,7 @@ import Style.Shadow as Shadow
 import Model exposing (..)
 import Model.Ui exposing (..)
 import Model.Resource exposing (..)
+import Model.FakeData exposing (computeFakeRating, computeFakeNumberOfRatings)
 
 import Msg exposing (..)
 
@@ -48,6 +49,8 @@ type MyStyles
   | ModalityStylePresent
   | ModalityStyleNotPresent
   | DislikeReasonStyle
+  | BarGraphWrapperStyle
+  | BarGraphBarStyle
 
 
 stylesheet =
@@ -147,6 +150,14 @@ stylesheet =
     , Style.style DislikeReasonStyle
       [ Color.border <| Color.rgb 100 100 100
       , Border.all 1
+      ]
+    , Style.style BarGraphWrapperStyle
+      [ Color.border <| Color.rgb 100 100 100
+      , Border.all 1
+      ]
+    , Style.style BarGraphBarStyle
+      [ Color.background <| Color.rgb 70 70 70
+      , Color.text <| Color.rgb 70 70 70
       ]
     ]
 
@@ -414,8 +425,10 @@ renderSearchResultDetails model resource =
   let
       (collapseButton, details) =
         if List.member resource.url model.expandedSearchResults then
-          ( button NoStyle [ paddingXY 4 1, onClick (HideDetails resource), alignRight ] (text "Hide")
-          , [ paragraph NoStyle [] [ text resource.url ] |> newTab resource.url ]
+          ( button NoStyle [ paddingXY 4 1, onClick (HideDetails resource), alignRight ] (text "Less")
+          , [ renderRatings resource
+            , paragraph NoStyle [] [ text resource.url ] |> newTab resource.url
+            ]
           )
         else
           ( button NoStyle [ paddingXY 4 1, onClick (ShowDetails resource), alignRight ] (text "More")
@@ -463,6 +476,39 @@ renderItemDropmenu model resource button =
     |> below [ el DropmenuStyle [ alignRight, paddingXY 10 5, onClick (RemoveResourceFromProject resource) ] (text "Remove") ]
   else
     button
+
+
+renderRatings resource =
+  let
+      metrics =
+        [ "accurate", "up to date", "accessible", "entertaining", "child friendly", "interactive", "well reasoned", "well explained", "clear examples", "hilarious", "attractive", "addictive", "math heavy", "correct grammar", "conversational" ]
+      labels =
+        metrics
+        |> List.map text
+        |> List.map (el NoStyle [])
+      averages =
+        metrics
+        |> List.map (computeFakeRating resource)
+        |> List.map ((*) 24)
+        |> List.map ((+) 4)
+        |> List.map renderBarGraph
+      -- numberOfRatings =
+      --   metrics
+      --   |> List.map (computeFakeNumberOfRatings resource)
+      --   |> List.map toString
+      --   |> List.map text
+      --   |> List.map (el NoStyle [])
+  in
+      table NoStyle [] [ labels, averages ]
+
+
+renderBarGraph percentage =
+  -- (percentage |> toString |> text)
+  -- "foo"
+  -- |> text
+  circle 3 NoStyle [] empty
+  |> el BarGraphBarStyle [ width (percentage |> toFloat |> percent) ]
+  |> el BarGraphWrapperStyle [ width fill, paddingTop 3 ]
 
 
 renderDislikeMenu =

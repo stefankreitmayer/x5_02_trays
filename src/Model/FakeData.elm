@@ -31,3 +31,17 @@ exampleResources =
   , Resource "A Brief Introduction to Machine Learning for Engineers" "https://arxiv.org/abs/1709.02840" "brief" "2017" (Set.fromList [ "book" ]) (Dict.singleton attrTextWorkload "15")
   , Resource "Intro To Machine Learning - Python & R In Data Science" "https://www.udemy.com/machinelearning" "python" "" (Set.fromList [ "course", "r", "python" ]) (Dict.singleton attrTextWorkload "30")
   , Resource "Machine Learning Guide" "http://ocdevel.com/podcasts/machine-learning" "ocdevel" "" (Set.fromList [ "podcast", "entertaining", "downloadable", "audio only" ]) (Dict.singleton attrTextWorkload "25") ]
+
+
+computeFakeRating resource metric =
+  ((resource.url |> String.length) + (metric |> String.length)) % 5
+
+
+computeFakeNumberOfRatings resource metric =
+  let
+      a = (metric |> String.length) % 3
+      b = (metric |> String.length) % 7
+      c = (resource.url |> String.length) % 3
+      d = (resource.url |> String.length) % 7
+  in
+      (a * 2 + b * 3 + c + d) % 50
