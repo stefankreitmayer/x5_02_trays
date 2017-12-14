@@ -18,6 +18,7 @@ type alias Model =
   , optionalItems : Set String
   , annotations : Dict (String, String) String
   , relevantTags : Set String
+  , dislikedResult : Maybe String
   , errorMsg : Maybe String }
 
 
@@ -31,6 +32,7 @@ initialModel =
   , optionalItems = Set.empty
   , annotations = Dict.empty
   , relevantTags = Set.empty
+  , dislikedResult = Nothing
   , errorMsg = Nothing }
 
 

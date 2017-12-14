@@ -54,6 +54,18 @@ update action oldModel =
           ({ model | annotations = model.annotations |> Dict.insert (resource.url, name) value }, Cmd.none)
 
 
+        DislikeResult url ->
+          ({ model | dislikedResult = Just url }, Cmd.none)
+
+
+        RevokeDislike ->
+          ({ model | dislikedResult = Nothing }, Cmd.none)
+
+
+        ConfirmDislike _ ->
+          ({ model | dislikedResult = Nothing, searchResults = model.searchResults |> List.filter (\r -> model.dislikedResult == Just r.url |> not) }, Cmd.none)
+
+
         -- AddRelevantTag name ->
         --   ({ model | relevantTags = model.relevantTags |> Set.insert name }, Cmd.none)
 

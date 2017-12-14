@@ -46,6 +46,7 @@ type MyStyles
   | ModalityDistributionStyle
   | ModalityStylePresent
   | ModalityStyleNotPresent
+  | DislikeReasonStyle
 
 
 stylesheet =
@@ -138,6 +139,10 @@ stylesheet =
     , Style.style ModalityStyleNotPresent
       [ Color.text <| Color.rgb 180 180 180
       ]
+    , Style.style DislikeReasonStyle
+      [ Color.border <| Color.rgb 100 100 100
+      , Border.all 1
+      ]
     ]
 
 
@@ -213,10 +218,19 @@ renderSearchResult model resource =
         el HintStyle [ padding 3 ] (text "Added")
       else
         button NoStyle [ padding 10, onClick (AddResourceToProject resource) ] (text "Add") |> el NoStyle []
+    dislikeButton =
+      decorativeImage NoStyle [ width (px 25), height (px 25) ] { src = "images/icons/dislike.svg" }
+      |> button NoStyle [ width fill, padding 8, onClick (DislikeResult resource.url) ] |> el NoStyle []
+    buttons =
+      column NoStyle [ spacing 10 ] <|
+      if model.dislikedResult == Just resource.url then
+        [ addButton ]
+      else
+        [ addButton, dislikeButton ]
   in
       row NoStyle [ spacing 10 ]
         [ renderSearchResultResource model resource
-        , addButton
+        , buttons
         ]
 
 
@@ -323,14 +337,18 @@ renderModalityDistribution model =
 
 renderSearchResultResource model resource =
   row ResourceStyle [ padding 10, spacing 10, width fill ]
-    [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
-    , column NoStyle [ spacing 3, width fill ]
-      [ paragraph ResourceTitleStyle [] [ text resource.title ]
-      , el HintStyle [ width fill ] (text resource.date)
-      , renderTagList resource
-      , renderSearchResultDetails model resource
+    (if model.dislikedResult == Just resource.url then
+      [ renderDislikeMenu ]
+    else
+      [ decorativeImage NoStyle [ width (px 150), maxHeight (px 80) ] { src = "images/resource_covers/" ++ resource.coverImageStub ++ ".png" }
+      , column NoStyle [ spacing 3, width fill ]
+        [ paragraph ResourceTitleStyle [] [ text resource.title ]
+        , el HintStyle [ width fill ] (text resource.date)
+        , renderTagList resource
+        , renderSearchResultDetails model resource
+        ]
       ]
-    ]
+    )
 
 
 -- returns a Keyed element
@@ -438,3 +456,19 @@ renderItemDropmenu model resource button =
     |> below [ el DropmenuStyle [ alignRight, paddingXY 10 5, onClick (RemoveResourceFromProject resource) ] (text "Remove") ]
   else
     button
+
+
+renderDislikeMenu =
+  column NoStyle [ spacing 10 ]
+    [ paragraph ResourceTitleStyle [] [ text "Don't like this result? Tell us why - thanks!" ]
+    , [ "Not an OER", "Not trustworthy", "Low quality", "Doesn't fit my needs", "Doesn't fit my preferences", "Other reason" ]
+      |> List.map renderDislikeReasonOption
+      |> column NoStyle [ spacing 5 ]
+    , el NoStyle [] (text "Never mind, it's fine")
+      |> button HintStyle [ onClick RevokeDislike ]
+    ]
+
+
+renderDislikeReasonOption reason =
+  el NoStyle [] (text reason)
+  |> button DislikeReasonStyle [ paddingXY 5 2, onClick (ConfirmDislike reason) ]

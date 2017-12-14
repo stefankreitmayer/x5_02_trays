@@ -14,6 +14,9 @@ type Msg
   | RemoveResourceFromProject Resource
   | ToggleItemOptional Resource Bool
   | ChangeAnnotation Resource String String
+  | DislikeResult String
+  | RevokeDislike
+  | ConfirmDislike String
   -- | AddRelevantTag String
   -- | RemoveRelevantTag String
 
