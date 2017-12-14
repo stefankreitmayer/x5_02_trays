@@ -77,7 +77,7 @@ stylesheet =
       [ Color.text <| Color.rgb 120 120 120
       ]
     , Style.style ProjectStyle
-      [ Border.left 2
+      [ Border.right 2
       ]
     , Style.style DropmenuStyle
       [ Color.background <| Color.white
@@ -110,7 +110,7 @@ stylesheet =
     --   , Font.weight 600
     --   ]
     , Style.style ProjectTitleStyle
-      [ Color.text <| Color.rgb 40 40 40
+      [ Color.text <| Color.rgb 150 150 150
       , Font.size 24
       ]
     , Style.style TagStyle
@@ -155,8 +155,8 @@ renderPageHeader =
 renderPageBody model =
   row DebugStyle [ height fill ]
     -- [ renderSideBar
-    [ renderCatalogue model
-    , renderProject model
+    [ renderProject model
+    , renderCatalogue model
     ]
 
 
@@ -167,7 +167,7 @@ renderPageBody model =
 
 
 renderCatalogue model =
-  column NoStyle [ width (percent 40), padding 10, spacing 10 ]
+  column NoStyle [ width (percent 45), padding 10, spacing 10 ]
     [ renderSearchTextField
     , renderSearchResults model
     ]
@@ -220,7 +220,7 @@ renderNumberOfSearchResults n =
 
 
 renderProject model =
-  column ProjectStyle [ width (percent 60) ]
+  column ProjectStyle [ width (percent 55) ]
     [ renderProjectOverview model
     , column NoStyle [ height fill, padding 10, spacing 10 ]
         [ renderItems model
@@ -245,7 +245,7 @@ renderItems model =
 renderProjectOverview : Model -> Element MyStyles variation Msg
 renderProjectOverview model =
   column ProjectOverviewStyle [ padding 10, spacing 5 ]
-    [ h2 ProjectTitleStyle [] (text "My Project")
+    [ h2 ProjectTitleStyle [] (text "Computational Thinking for age 9")
     , renderTotalWorkload model
     , renderModalityDistribution model
     -- , h4 H4Style [] (text "Relevant tags")
