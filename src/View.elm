@@ -339,12 +339,6 @@ renderItem model resource =
                   |> button NoStyle [ onClick (ToggleItemDropmenu resource), alignRight ]
                   |> renderItemDropmenu model resource
                   |> el NoStyle []
-                  , Input.checkbox NoStyle []
-                      { onChange = ToggleItemOptional resource
-                      , checked = isItemOptional model resource
-                      , label = el NoStyle [] (text "optional")
-                      , options = []
-                      }
                 ]
               ]
             , renderItemAnnotations model resource
@@ -400,13 +394,26 @@ renderItemDetails model resource =
 
 renderItemAnnotations model resource =
   let
-      renderAnnotation name =
+      renderAnnotationInput name =
         Input.text AnnotationInputStyle []
           { onChange = ChangeAnnotation resource name
           , value = getAnnotation model resource name
           , label = Input.labelLeft <| el NoStyle [] (text name)
           , options = []
           }
+      renderAnnotation name =
+        if name == attrTextWorkload then
+          row NoStyle []
+          [ renderAnnotationInput name
+          , Input.checkbox NoStyle [ alignRight ]
+              { onChange = ToggleItemOptional resource
+              , checked = isItemOptional model resource
+              , label = el NoStyle [] (text "optional")
+              , options = []
+              }
+          ]
+        else
+          renderAnnotationInput name
   in
       column AnnotationsStyle [ spacing 3, padding 5 ]
         (itemAnnotation |> List.map renderAnnotation)
