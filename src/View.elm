@@ -188,10 +188,23 @@ renderSearchResults ({searchResults} as model) =
   searchResults
   |> List.map (renderSearchResult model)
   |> (::) (renderNumberOfSearchResults (List.length searchResults))
+  |> (::) renderSearchFilters
   |> column NoStyle [ width fill, spacing 10 ]
   |> List.singleton
   |> column NoStyle [ width fill, height fill, spacing 10, yScrollbar ]
 
+
+renderSearchFilters =
+  [ "Any type", "Any year", "Any age", "Any language", "Any popularity", "Any X5 rating" ]
+  |> List.map renderSearchFilter
+  |> row NoStyle [ spacing 20 ]
+
+renderSearchFilter name =
+  row NoStyle [ spacing 6 ]
+    [ el HintStyle [] (text name)
+    , decorativeImage NoStyle [ width (px 8), height (px 4) ] { src = "images/icons/triangle_down.svg" }
+      |> el NoStyle [ paddingTop 6]
+    ]
 
 renderSearchResult model resource =
   let
