@@ -13,11 +13,18 @@ type alias Resource =
 
 
 workloadInHours model resource =
-  model.annotations
-  |> Dict.get (resource.url, attrTextWorkload)
-  |> Maybe.withDefault "0.5"
-  |> String.toFloat
-  |> Result.withDefault 0.5
+  if isItemOptional model resource then
+    0
+  else
+      model.annotations
+      |> Dict.get (resource.url, attrTextWorkload)
+      |> Maybe.withDefault "0.5"
+      |> String.toFloat
+      |> Result.withDefault 0.5
+
+
+isItemOptional model resource =
+  model.optionalItems |> Set.member resource.url
 
 
 attrTextWorkload =

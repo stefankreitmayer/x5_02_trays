@@ -34,10 +34,6 @@ initialModel =
   , errorMsg = Nothing }
 
 
-isItemOptional model resource =
-  model.optionalItems |> Set.member resource.url
-
-
 getAnnotation model resource name =
   model.annotations |> Dict.get (resource.url, name) |> Maybe.withDefault ""
 

@@ -395,7 +395,7 @@ renderItemDetails model resource =
 renderItemAnnotations model resource =
   let
       renderAnnotationInput name =
-        Input.text AnnotationInputStyle []
+        Input.text AnnotationInputStyle (if name == attrTextWorkload then [ width (px 40) ] else [])
           { onChange = ChangeAnnotation resource name
           , value = getAnnotation model resource name
           , label = Input.labelLeft <| el NoStyle [] (text name)
