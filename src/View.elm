@@ -27,6 +27,7 @@ import Msg exposing (..)
 type MyStyles
   = NoStyle
   | DebugStyle
+  | PageBodyStyle
   | HeaderStyle
   | SidebarStyle
   | ResourceStyle
@@ -53,6 +54,10 @@ stylesheet =
   Style.styleSheet
     [ Style.style NoStyle []
     , Style.style DebugStyle
+      [ Color.background <| Color.rgb 210 210 210
+      , Border.all 2
+      ]
+    , Style.style PageBodyStyle
       [ Color.background <| Color.rgb 210 210 210
       , Border.all 2
       ]
@@ -158,7 +163,7 @@ renderPageHeader =
 
 
 renderPageBody model =
-  row DebugStyle [ height fill ]
+  row PageBodyStyle [ height fill ]
     -- [ renderSideBar
     [ renderProject model
     , renderCatalogue model
@@ -272,7 +277,10 @@ renderItems model =
 renderProjectOverview : Model -> Element MyStyles variation Msg
 renderProjectOverview model =
   column ProjectOverviewStyle [ padding 10, spacing 5 ]
-    [ h2 ProjectTitleStyle [] (text "Computational Thinking for age 9")
+    [ row NoStyle []
+      [ h2 ProjectTitleStyle [] (text "Computational Thinking for Age 9")
+      , decorativeImage EllipsisStyle [ width (px 20) ] { src = "images/icons/ellipsis_white.png" } |> el NoStyle [ alignRight ] |> el NoStyle [ width fill ]
+      ]
     , renderTotalWorkload model
     , renderModalityDistribution model
     -- , h4 H4Style [] (text "Relevant tags")
@@ -280,7 +288,6 @@ renderProjectOverview model =
     -- , h4 H4Style [] (text "Suggested tags (click to add)")
     -- , renderSuggestedTags model
     ]
-
 
 renderTotalWorkload model =
   let
