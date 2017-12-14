@@ -28,6 +28,7 @@ import Msg exposing (..)
 type MyStyles
   = NoStyle
   | DebugStyle
+  | InvisibleStyle
   | PageBodyStyle
   | HeaderStyle
   | SidebarStyle
@@ -49,8 +50,7 @@ type MyStyles
   | ModalityStylePresent
   | ModalityStyleNotPresent
   | DislikeReasonStyle
-  | BarGraphWrapperStyle
-  | BarGraphBarStyle
+  | StarStyle
 
 
 stylesheet =
@@ -59,6 +59,9 @@ stylesheet =
     , Style.style DebugStyle
       [ Color.background <| Color.rgb 210 210 210
       , Border.all 2
+      ]
+    , Style.style InvisibleStyle
+      [ Style.opacity 0
       ]
     , Style.style PageBodyStyle
       [ Color.background <| Color.rgb 210 210 210
@@ -151,13 +154,8 @@ stylesheet =
       [ Color.border <| Color.rgb 100 100 100
       , Border.all 1
       ]
-    , Style.style BarGraphWrapperStyle
-      [ Color.border <| Color.rgb 100 100 100
-      , Border.all 1
-      ]
-    , Style.style BarGraphBarStyle
-      [ Color.background <| Color.rgb 70 70 70
-      , Color.text <| Color.rgb 70 70 70
+    , Style.style StarStyle
+      [ Style.opacity 0.9
       ]
     ]
 
@@ -479,36 +477,30 @@ renderItemDropmenu model resource button =
 
 
 renderRatings resource =
+  [ "accurate", "up to date", "accessible", "entertaining", "child friendly", "interactive", "well reasoned", "well explained", "clear examples", "hilarious", "attractive", "addictive", "math heavy", "correct grammar", "conversational" ]
+  |> List.map (renderRating resource)
+  |> column NoStyle []
+
+
+renderRating resource metric =
+  row NoStyle [ spacing 5 ]
+    [ renderStarGraph (computeFakeRating resource metric)
+    , metric |> text |> el NoStyle [ width fill ]
+    , (computeFakeNumberOfRatings resource metric |> toString) ++ " votes" |> text |> el NoStyle []
+    ]
+
+
+renderStarGraph n =
+  List.range 1 5
+  |> List.map (renderStar n)
+  |> row NoStyle []
+
+
+renderStar nStarsOfResource starIndex =
   let
-      metrics =
-        [ "accurate", "up to date", "accessible", "entertaining", "child friendly", "interactive", "well reasoned", "well explained", "clear examples", "hilarious", "attractive", "addictive", "math heavy", "correct grammar", "conversational" ]
-      labels =
-        metrics
-        |> List.map text
-        |> List.map (el NoStyle [])
-      averages =
-        metrics
-        |> List.map (computeFakeRating resource)
-        |> List.map ((*) 24)
-        |> List.map ((+) 4)
-        |> List.map renderBarGraph
-      -- numberOfRatings =
-      --   metrics
-      --   |> List.map (computeFakeNumberOfRatings resource)
-      --   |> List.map toString
-      --   |> List.map text
-      --   |> List.map (el NoStyle [])
+      style = if (starIndex > nStarsOfResource) then StarStyle else InvisibleStyle
   in
-      table NoStyle [] [ labels, averages ]
-
-
-renderBarGraph percentage =
-  -- (percentage |> toString |> text)
-  -- "foo"
-  -- |> text
-  circle 3 NoStyle [] empty
-  |> el BarGraphBarStyle [ width (percentage |> toFloat |> percent) ]
-  |> el BarGraphWrapperStyle [ width fill, paddingTop 3 ]
+      decorativeImage style [ width (px 12), height (px 12) ] { src = "images/icons/star2.svg" }
 
 
 renderDislikeMenu =

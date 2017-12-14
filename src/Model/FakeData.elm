@@ -39,9 +39,9 @@ computeFakeRating resource metric =
 
 computeFakeNumberOfRatings resource metric =
   let
-      a = (metric |> String.length) % 3
+      a = (metric |> String.length) * 5 % 6
       b = (metric |> String.length) % 7
       c = (resource.url |> String.length) % 3
       d = (resource.url |> String.length) % 7
   in
-      (a * 2 + b * 3 + c + d) % 50
+      (a * 2 + b * 3 + c*5 + d^2) % 150
