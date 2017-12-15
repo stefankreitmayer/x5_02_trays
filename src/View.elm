@@ -3,11 +3,12 @@ module View exposing (view)
 import Html exposing (Html)
 import Color exposing (..)
 import Set exposing (Set)
+import Dict exposing (Dict)
 -- import Debug exposing (log)
 
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onClick, onCheck)
+import Element.Events exposing (onClick, onCheck, onMouseOver, onMouseOut)
 import Element.Input as Input
 import Element.Keyed as Keyed
 
@@ -20,7 +21,7 @@ import Style.Shadow as Shadow
 import Model exposing (..)
 import Model.Ui exposing (..)
 import Model.Resource exposing (..)
-import Model.FakeData exposing (computeFakeRating, computeFakeNumberOfRatings)
+import Model.FakeData exposing (computeFakeRating, computeFakeNumberOfRatings, commonRatingMetrics)
 
 import Msg exposing (..)
 
@@ -29,6 +30,7 @@ type MyStyles
   = NoStyle
   | DebugStyle
   | InvisibleStyle
+  | ThinvisibleStyle
   | PageBodyStyle
   | HeaderStyle
   | SidebarStyle
@@ -51,6 +53,8 @@ type MyStyles
   | ModalityStyleNotPresent
   | DislikeReasonStyle
   | StarStyle
+  | StarHoverStyle
+  | UrlStyle
 
 
 stylesheet =
@@ -62,6 +66,9 @@ stylesheet =
       ]
     , Style.style InvisibleStyle
       [ Style.opacity 0
+      ]
+    , Style.style ThinvisibleStyle
+      [ Style.opacity 0.2
       ]
     , Style.style PageBodyStyle
       [ Color.background <| Color.rgb 210 210 210
@@ -155,7 +162,13 @@ stylesheet =
       , Border.all 1
       ]
     , Style.style StarStyle
-      [ Style.opacity 0.9
+      [ Style.opacity 0.85
+      ]
+    , Style.style StarHoverStyle
+      [ Style.opacity 0.5
+      ]
+    , Style.style UrlStyle
+      [ Color.text <| Color.rgb 30 80 200
       ]
     ]
 
@@ -425,7 +438,7 @@ renderSearchResultDetails model resource =
         if List.member resource.url model.expandedSearchResults then
           ( button NoStyle [ paddingXY 4 1, onClick (HideDetails resource), alignRight ] (text "Less")
           , [ renderRatings resource
-            , paragraph NoStyle [] [ text resource.url ] |> newTab resource.url
+            , paragraph UrlStyle [] [ text resource.url ] |> newTab resource.url
             ]
           )
         else
@@ -463,9 +476,39 @@ renderItemAnnotations model resource =
           ]
         else
           renderAnnotationInput name
+      ratingEditor =
+        renderRatingEditor model resource
   in
       column AnnotationsStyle [ spacing 3, padding 5 ]
-        (itemAnnotation |> List.map renderAnnotation)
+        ((itemAnnotation |> List.map renderAnnotation) ++ [ ratingEditor ])
+
+
+renderRatingEditor model resource =
+  let
+      button =
+        row NoStyle [ spacing 6 ]
+          [ el NoStyle [] (text "My Ratings")
+          , decorativeImage NoStyle [ width (px 8), height (px 4) ] { src = "images/icons/triangle_down.svg" }
+            |> el NoStyle [ paddingTop 6]
+          ]
+      existinMetrics =
+        commonRatingMetrics
+        |> List.map (renderEditableRating model resource)
+        |> column NoStyle []
+  in
+      column NoStyle []
+        [ button
+        , existinMetrics ]
+
+
+renderEditableRating model resource metric =
+  let
+      rateable = (resource.url, metric)
+  in
+      row NoStyle [ spacing 5 ]
+        [ metric |> text |> el NoStyle [ alignRight ] |> el NoStyle [ width (percent 50)]
+        , renderStarGraphEditable model rateable ThinvisibleStyle (model.enteredRatings |> Dict.get rateable |> Maybe.withDefault 0)
+        ]
 
 
 renderItemDropmenu model resource button =
@@ -477,30 +520,58 @@ renderItemDropmenu model resource button =
 
 
 renderRatings resource =
-  [ "accurate", "up to date", "accessible", "entertaining", "child friendly", "interactive", "well reasoned", "well explained", "clear examples", "hilarious", "attractive", "addictive", "math heavy", "correct grammar", "conversational" ]
+  commonRatingMetrics
   |> List.map (renderRating resource)
   |> column NoStyle []
 
 
 renderRating resource metric =
   row NoStyle [ spacing 5 ]
-    [ renderStarGraph (computeFakeRating resource metric)
+    [ renderStarGraphStatic InvisibleStyle (computeFakeRating resource metric)
     , metric |> text |> el NoStyle [ width fill ]
-    , (computeFakeNumberOfRatings resource metric |> toString) ++ " votes" |> text |> el NoStyle []
+    , (computeFakeNumberOfRatings resource metric |> toString) ++ " users" |> text |> el NoStyle []
     ]
 
 
-renderStarGraph n =
+renderStarGraphStatic hiddenStyle n =
   List.range 1 5
-  |> List.map (renderStar n)
+  |> List.map (renderStarStatic n)
   |> row NoStyle []
 
 
-renderStar nStarsOfResource starIndex =
+renderStarGraphEditable model rateable hiddenStyle n =
+  List.range 1 5
+  |> List.map (renderStarEditable model rateable n)
+  |> row NoStyle []
+
+
+renderStarStatic nStarsOfResource starIndex =
+  drawStar (if starIndex <= nStarsOfResource then StarStyle else InvisibleStyle) []
+
+
+renderStarEditable model rateable nStarsOfResource starIndex =
   let
-      style = if (starIndex > nStarsOfResource) then StarStyle else InvisibleStyle
+      isHovering =
+        case model.hoveringRating of
+          Nothing ->
+            False
+
+          Just (r, nStars) ->
+            r == rateable && starIndex <= nStars
+      style =
+        if isHovering then
+          StarHoverStyle
+        else if starIndex <= nStarsOfResource then
+          StarStyle
+        else
+          ThinvisibleStyle
   in
-      decorativeImage style [ width (px 12), height (px 12) ] { src = "images/icons/star2.svg" }
+      drawStar style [ onMouseOver (HoverRating (rateable, starIndex)), onMouseOut UnHoverRating, onClick EnterRating ]
+
+
+drawStar style events =
+  decorativeImage style [ width (px 12), height (px 12) ] { src = "images/icons/star2.svg" }
+  |> el NoStyle (events ++ [ paddingXY 0 2 ])
 
 
 renderDislikeMenu =

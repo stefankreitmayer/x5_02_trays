@@ -19,7 +19,13 @@ type alias Model =
   , annotations : Dict (String, String) String
   , relevantTags : Set String
   , dislikedResult : Maybe String
+  , enteredRatings : Dict Rateable Int
+  , hoveringRating : Maybe (Rateable, Int)
   , errorMsg : Maybe String }
+
+
+type alias Rateable =
+  (String, String)
 
 
 initialModel : Model
@@ -33,6 +39,8 @@ initialModel =
   , annotations = Dict.empty
   , relevantTags = Set.empty
   , dislikedResult = Nothing
+  , enteredRatings = Dict.empty
+  , hoveringRating = Nothing
   , errorMsg = Nothing }
 
 
@@ -41,4 +49,4 @@ getAnnotation model resource name =
 
 
 itemAnnotation =
-  [ attrTextWorkload, "Comments" ]
+  [ attrTextWorkload, "My Comments" ]

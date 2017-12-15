@@ -34,7 +34,7 @@ exampleResources =
 
 
 computeFakeRating resource metric =
-  ((resource.url |> String.length) + (metric |> String.length)) % 5
+  ((resource.url |> String.length) + (metric |> String.length)) % 5 + 1
 
 
 computeFakeNumberOfRatings resource metric =
@@ -45,3 +45,7 @@ computeFakeNumberOfRatings resource metric =
       d = (resource.url |> String.length) % 7
   in
       (a * 2 + b * 3 + c*5 + d^2) % 150
+
+
+commonRatingMetrics =
+  [ "accurate", "up to date", "accessible", "entertaining", "child friendly", "interactive", "well reasoned", "well explained", "clear examples", "hilarious", "attractive", "addictive", "engaging", "math heavy", "correct grammar", "conversational" ]

@@ -66,6 +66,23 @@ update action oldModel =
           ({ model | dislikedResult = Nothing, searchResults = model.searchResults |> List.filter (\r -> model.dislikedResult == Just r.url |> not) }, Cmd.none)
 
 
+        HoverRating r ->
+          ({ model | hoveringRating = Just r }, Cmd.none)
+
+
+        UnHoverRating ->
+          ({ model | hoveringRating = Nothing }, Cmd.none)
+
+
+        EnterRating ->
+          case model.hoveringRating of
+            Nothing ->
+              (model, Cmd.none)
+
+            Just (k, v) ->
+              ({ model | hoveringRating = Nothing, enteredRatings = model.enteredRatings |> Dict.insert k v }, Cmd.none)
+
+
         -- AddRelevantTag name ->
         --   ({ model | relevantTags = model.relevantTags |> Set.insert name }, Cmd.none)
 

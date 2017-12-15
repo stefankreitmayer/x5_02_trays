@@ -17,6 +17,9 @@ type Msg
   | DislikeResult String
   | RevokeDislike
   | ConfirmDislike String
+  | HoverRating (Rateable, Int)
+  | UnHoverRating
+  | EnterRating
   -- | AddRelevantTag String
   -- | RemoveRelevantTag String
 
