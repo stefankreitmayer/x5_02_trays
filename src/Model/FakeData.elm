@@ -30,6 +30,10 @@ exampleResources =
   , Resource "A Non-Technical Introduction to Machine Learning – SafeGraph" "https://blog.safegraph.com/a-non-technical-introduction-to-machine-learning-b49fce202ae8?gi=ccaf0749079" "safegraph" "2017" (Set.fromList [ "article" ]) (Dict.singleton attrTextWorkload "0.5")
   , Resource "A Brief Introduction to Machine Learning for Engineers" "https://arxiv.org/abs/1709.02840" "brief" "2017" (Set.fromList [ "book" ]) (Dict.singleton attrTextWorkload "15")
   , Resource "Intro To Machine Learning - Python & R In Data Science" "https://www.udemy.com/machinelearning" "python" "" (Set.fromList [ "course", "r", "python" ]) (Dict.singleton attrTextWorkload "30")
+  , Resource "11. Introduction to Machine Learning" "https://www.youtube.com/watch?v=h0e2HAPTGF4" "yout1" "" (Set.fromList [ "mit" ]) (Dict.singleton attrTextWorkload "1")
+  , Resource "TensorFlow and Deep Learning without a PhD, Part 1 (Google Cloud Next '17)" "https://www.youtube.com/watch?v=u4alGiomYP4" "yout2" "" (Set.fromList [ "google" ]) (Dict.singleton attrTextWorkload "1")
+  , Resource "Introduction to Data Analysis using Machine Learning" "https://www.youtube.com/watch?v=U4IYsLgNgoY" "yout3" "" (Set.fromList [ "" ]) (Dict.singleton attrTextWorkload "1")
+  , Resource "Hello World - Machine Learning Recipes #1" "https://www.youtube.com/watch?v=cKxRvEZd3Mw" "yout4" "" (Set.fromList [ "" ]) (Dict.singleton attrTextWorkload "0.1")
   , Resource "Machine Learning Guide" "http://ocdevel.com/podcasts/machine-learning" "ocdevel" "" (Set.fromList [ "podcast", "entertaining", "downloadable", "audio only" ]) (Dict.singleton attrTextWorkload "25") ]
 
 
