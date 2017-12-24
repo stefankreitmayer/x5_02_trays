@@ -34,6 +34,7 @@ exampleResources =
   , Resource "TensorFlow and Deep Learning without a PhD, Part 1 (Google Cloud Next '17)" "https://www.youtube.com/watch?v=u4alGiomYP4" "yout2" "" (Set.fromList [ "google" ]) (Dict.singleton attrTextWorkload "1")
   , Resource "Introduction to Data Analysis using Machine Learning" "https://www.youtube.com/watch?v=U4IYsLgNgoY" "yout3" "" (Set.fromList [ "" ]) (Dict.singleton attrTextWorkload "1")
   , Resource "Hello World - Machine Learning Recipes #1" "https://www.youtube.com/watch?v=cKxRvEZd3Mw" "yout4" "" (Set.fromList [ "" ]) (Dict.singleton attrTextWorkload "0.1")
+  , Resource "Introduction - Learn Python for Data Science #1" "https://www.youtube.com/watch?v=T5pRlIbr6gg" "siraj" "" (Set.fromList [ "" ]) (Dict.singleton attrTextWorkload "0.1")
   , Resource "Machine Learning Guide" "http://ocdevel.com/podcasts/machine-learning" "ocdevel" "" (Set.fromList [ "podcast", "entertaining", "downloadable", "audio only" ]) (Dict.singleton attrTextWorkload "25") ]
 
 
